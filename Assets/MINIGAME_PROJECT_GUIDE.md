@@ -65,6 +65,8 @@ Unity 상단 메뉴에서 아래 항목을 실행할 수 있습니다.
 - `BalancePlayerController`: `balanceTorque`, `randomTiltForce`, `maxSafeAngle`, `difficultyIncreaseRate`, `moveSpeed`, `speedIncreaseRate`, `useAutoMove`
 - `BalanceCameraController`: `offset`, `followSpeed`, `followXOnly`
 - `BalanceGroundLoop`: `tileWidth`, `tileCount`, `recycleBehind`
+- `BalanceDistanceCueLoop`: `spacing`, `cueCount`, `recycleBehind`
+- `BalanceParallaxLoop`: `parallaxFactor`, `tileWidth`, `tileCount`
 - `BalanceUI`: `timeText`, `bestText`, `hintText`, `countdownText`
 
 축구:
@@ -92,6 +94,7 @@ Unity 상단 메뉴에서 아래 항목을 실행할 수 있습니다.
 - 시작 시 `3, 2, 1, Start!` 카운트다운 후 이동과 넘어짐 판정이 시작됩니다.
 - 치토는 자동으로 오른쪽으로 계속 전진하고, 카메라는 치토를 따라갑니다.
 - 점수와 최고 기록은 생존 시간이 아니라 시작 지점부터 이동한 거리 기준입니다.
+- 바닥 대시, 거리 표지판, 캠퍼스 실루엣이 지나가면서 전진감을 만듭니다.
 
 축구:
 

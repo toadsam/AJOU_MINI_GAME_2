@@ -16,8 +16,8 @@ namespace AjouFestival.Games.BalanceWalk
         [SerializeField] private float randomTiltForce = 4f;
         [SerializeField] private float maxSafeAngle = 35f;
         [SerializeField] private float difficultyIncreaseRate = 0.05f;
-        [SerializeField] private float moveSpeed = 2.2f;
-        [SerializeField] private float speedIncreaseRate = 0.02f;
+        [SerializeField] private float moveSpeed = 4.2f;
+        [SerializeField] private float speedIncreaseRate = 0.035f;
         [SerializeField] private bool useAutoMove = true;
         [SerializeField] private bool useDirectRotationAssist = true;
         [SerializeField] private float directRotationSpeed = 95f;

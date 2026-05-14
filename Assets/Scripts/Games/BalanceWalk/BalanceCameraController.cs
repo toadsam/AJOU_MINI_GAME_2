@@ -5,8 +5,8 @@ namespace AjouFestival.Games.BalanceWalk
     public sealed class BalanceCameraController : MonoBehaviour
     {
         [SerializeField] private Transform target;
-        [SerializeField] private Vector3 offset = new Vector3(2.2f, 0.4f, -10f);
-        [SerializeField] private float followSpeed = 6f;
+        [SerializeField] private Vector3 offset = new Vector3(2.8f, 0.4f, -10f);
+        [SerializeField] private float followSpeed = 3.2f;
         [SerializeField] private bool followXOnly = true;
 
         private float fixedY;

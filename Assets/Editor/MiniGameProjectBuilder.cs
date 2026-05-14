@@ -166,8 +166,8 @@ public static class MiniGameProjectBuilder
         player.AddComponent<BalancePlayerController>();
         BalancePlayerController controller = player.GetComponent<BalancePlayerController>();
         SerializedObject serialized = new SerializedObject(controller);
-        serialized.FindProperty("moveSpeed").floatValue = 2.2f;
-        serialized.FindProperty("speedIncreaseRate").floatValue = 0.02f;
+        serialized.FindProperty("moveSpeed").floatValue = 4.2f;
+        serialized.FindProperty("speedIncreaseRate").floatValue = 0.035f;
         serialized.FindProperty("useAutoMove").boolValue = true;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         SavePrefab(player, "Assets/Prefabs/Games/BalanceWalk/BalancePlayer.prefab");
@@ -335,6 +335,8 @@ public static class MiniGameProjectBuilder
         GameObject player = InstantiatePrefab("Assets/Prefabs/Games/BalanceWalk/BalancePlayer.prefab");
         player.transform.position = new Vector3(0f, -0.8f, 0f);
 
+        CreateBalanceMotionCues();
+
         Canvas canvas = CreateBaseCanvas("Canvas_BalanceUI");
         canvas.gameObject.AddComponent<BalanceUI>();
         CreateTopText(canvas.transform, "TimeText", "이동 거리 0.0 m", new Vector2(210f, -40f), TextAnchor.MiddleLeft);
@@ -345,6 +347,83 @@ public static class MiniGameProjectBuilder
         CreateBalanceMeter(canvas.transform);
 
         SaveScene("03_BalanceWalk");
+    }
+
+    private static void CreateBalanceMotionCues()
+    {
+        Sprite laneSprite = LoadSprite("Assets/Sprites/Placeholder/placeholder_lane_mark.png");
+        Sprite postSprite = LoadSprite("Assets/Sprites/Placeholder/placeholder_distance_post.png");
+        Sprite campusSprite = LoadSprite("Assets/Sprites/Backgrounds/placeholder_campus_block.png");
+
+        for (int i = 0; i < 8; i++)
+        {
+            CreateBalanceBackgroundBlock(i, campusSprite);
+        }
+
+        for (int i = 0; i < 24; i++)
+        {
+            CreateBalanceDistanceCue(i, laneSprite, postSprite);
+        }
+    }
+
+    private static void CreateBalanceBackgroundBlock(int index, Sprite sprite)
+    {
+        GameObject block = new GameObject($"CampusParallax_{index + 1:00}");
+        block.transform.position = new Vector3(-12f + index * 24f, 0.25f, 0f);
+        block.transform.localScale = new Vector3(8f, 3f, 1f);
+        SpriteRenderer renderer = block.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.color = new Color(0.58f, 0.78f, 1f, 0.35f);
+        renderer.sortingOrder = -12;
+        BalanceParallaxLoop loop = block.AddComponent<BalanceParallaxLoop>();
+        SerializedObject serialized = new SerializedObject(loop);
+        serialized.FindProperty("parallaxFactor").floatValue = 0.22f;
+        serialized.FindProperty("tileWidth").floatValue = 24f;
+        serialized.FindProperty("tileCount").intValue = 8;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void CreateBalanceDistanceCue(int index, Sprite laneSprite, Sprite postSprite)
+    {
+        GameObject cue = new GameObject($"DistanceCue_{index + 1:00}");
+        cue.transform.position = new Vector3(5f + index * 8f, 0f, 0f);
+
+        GameObject lane = new GameObject("LaneDash");
+        lane.transform.SetParent(cue.transform);
+        lane.transform.localPosition = new Vector3(0f, -2.17f, 0f);
+        lane.transform.localScale = new Vector3(2.8f, 1.2f, 1f);
+        SpriteRenderer laneRenderer = lane.AddComponent<SpriteRenderer>();
+        laneRenderer.sprite = laneSprite;
+        laneRenderer.sortingOrder = 2;
+
+        GameObject post = new GameObject("DistancePost");
+        post.transform.SetParent(cue.transform);
+        post.transform.localPosition = new Vector3(0f, -1.62f, 0f);
+        post.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
+        SpriteRenderer postRenderer = post.AddComponent<SpriteRenderer>();
+        postRenderer.sprite = postSprite;
+        postRenderer.sortingOrder = 3;
+
+        GameObject labelObj = new GameObject("DistanceLabel");
+        labelObj.transform.SetParent(cue.transform);
+        labelObj.transform.localPosition = new Vector3(0f, -0.96f, 0f);
+        TextMesh label = labelObj.AddComponent<TextMesh>();
+        label.text = $"{Mathf.RoundToInt(cue.transform.position.x)}m";
+        label.anchor = TextAnchor.MiddleCenter;
+        label.alignment = TextAlignment.Center;
+        label.characterSize = 0.28f;
+        label.fontSize = 48;
+        label.color = Color.white;
+        MeshRenderer labelRenderer = labelObj.GetComponent<MeshRenderer>();
+        labelRenderer.sortingOrder = 4;
+
+        BalanceDistanceCueLoop loop = cue.AddComponent<BalanceDistanceCueLoop>();
+        SerializedObject serialized = new SerializedObject(loop);
+        serialized.FindProperty("distanceLabel").objectReferenceValue = label;
+        serialized.FindProperty("spacing").floatValue = 8f;
+        serialized.FindProperty("cueCount").intValue = 24;
+        serialized.FindProperty("recycleBehind").floatValue = 16f;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static void CreateSoccerScene()
@@ -595,12 +674,15 @@ public static class MiniGameProjectBuilder
     {
         SaveSprite("Assets/Sprites/Backgrounds/placeholder_menu_bg.png", 960, 540, (x, y) => Color.Lerp(new Color(0.07f, 0.25f, 0.58f), new Color(0.82f, 0.94f, 1f), y / 539f), 1f);
         SaveSprite("Assets/Sprites/Backgrounds/placeholder_soccer_field.png", 256, 160, (x, y) => new Color(0.16f, 0.58f, 0.34f), 32f);
+        SaveSprite("Assets/Sprites/Backgrounds/placeholder_campus_block.png", 240, 120, (x, y) => y < 10 || x < 10 || x > 230 || (x > 40 && x < 68 && y > 42) || (x > 96 && x < 126 && y > 30) || (x > 158 && x < 194 && y > 52) ? new Color(0.4f, 0.72f, 1f, 0.85f) : Color.clear, 100f);
         SaveSprite("Assets/Sprites/Chito/placeholder_chito.png", 96, 96, (x, y) => CirclePixel(x, y, 96, new Color(0.2f, 0.85f, 1f), Color.white), 100f);
         SaveSprite("Assets/Sprites/Chito/placeholder_balance_chito.png", 80, 180, (x, y) => CapsulePixel(x, y, 80, 180, new Color(0.18f, 0.78f, 1f), new Color(0.03f, 0.14f, 0.28f)), 100f);
         SaveSprite("Assets/Sprites/Platforms/placeholder_platform.png", 400, 60, (x, y) => y > 42 ? new Color(0.76f, 0.9f, 1f) : new Color(0.2f, 0.38f, 0.56f), 100f);
         SaveSprite("Assets/Sprites/Items/placeholder_aplus.png", 72, 72, (x, y) => CirclePixel(x, y, 72, new Color(1f, 0.88f, 0.18f), Color.white), 100f);
         SaveSprite("Assets/Sprites/Obstacles/placeholder_obstacle.png", 72, 72, (x, y) => new Color(1f, 0.28f, 0.25f, 1f), 100f);
         SaveSprite("Assets/Sprites/Placeholder/placeholder_ground.png", 320, 40, (x, y) => new Color(0.15f, 0.32f, 0.48f), 100f);
+        SaveSprite("Assets/Sprites/Placeholder/placeholder_lane_mark.png", 96, 18, (x, y) => new Color(0.72f, 0.94f, 1f, 0.95f), 100f);
+        SaveSprite("Assets/Sprites/Placeholder/placeholder_distance_post.png", 28, 128, (x, y) => x < 8 || x > 20 || y > 104 ? new Color(0.9f, 0.97f, 1f, 0.95f) : new Color(0.1f, 0.45f, 0.95f, 0.9f), 100f);
         SaveSprite("Assets/Sprites/Placeholder/placeholder_p1.png", 72, 72, (x, y) => CirclePixel(x, y, 72, new Color(0.1f, 0.55f, 1f), Color.white), 100f);
         SaveSprite("Assets/Sprites/Placeholder/placeholder_p2.png", 72, 72, (x, y) => CirclePixel(x, y, 72, new Color(1f, 0.32f, 0.36f), Color.white), 100f);
         SaveSprite("Assets/Sprites/Placeholder/placeholder_ball.png", 64, 64, (x, y) => CirclePixel(x, y, 64, Color.white, Color.black), 100f);

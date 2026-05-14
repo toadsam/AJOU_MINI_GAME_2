@@ -176,8 +176,8 @@ MonoBehaviour:
   randomTiltForce: 4
   maxSafeAngle: 35
   difficultyIncreaseRate: 0.05
-  moveSpeed: 2.2
-  speedIncreaseRate: 0.02
+  moveSpeed: 4.2
+  speedIncreaseRate: 0.035
   useAutoMove: 1
   useDirectRotationAssist: 1
   directRotationSpeed: 95
