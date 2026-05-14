@@ -17,10 +17,12 @@ namespace AjouFestival.Games.AjouBoontu
         [SerializeField] private float runSpeed = 5.8f;
         [SerializeField] private float jumpForce = 11f;
         [SerializeField] private float fallDeathY = -7f;
+        [SerializeField, Min(1)] private int maxJumpCount = 2;
 
         private Rigidbody2D body;
         private AjouBoontuGameManager gameManager;
         private int groundContacts;
+        private int jumpsUsed;
 
         public bool IsGrounded => groundContacts > 0;
         public bool IsGameOver => gameManager != null && gameManager.IsGameOver;
@@ -36,6 +38,7 @@ namespace AjouFestival.Games.AjouBoontu
             body = GetComponent<Rigidbody2D>();
             body.freezeRotation = true;
             body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            maxJumpCount = Mathf.Max(1, maxJumpCount);
             if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
             if (spriteRenderer == null) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         }
@@ -48,7 +51,7 @@ namespace AjouFestival.Games.AjouBoontu
                 return;
             }
 
-            if ((FestivalInput.GetKeyDown(KeyCode.Space) || FestivalInput.MouseOrTouchDown()) && IsGrounded)
+            if ((FestivalInput.GetKeyDown(KeyCode.Space) || FestivalInput.MouseOrTouchDown()) && CanJump())
             {
                 Jump();
             }
@@ -71,8 +74,14 @@ namespace AjouFestival.Games.AjouBoontu
             body.linearVelocity = new Vector2(runSpeed, body.linearVelocity.y);
         }
 
+        private bool CanJump()
+        {
+            return IsGrounded || jumpsUsed < maxJumpCount;
+        }
+
         private void Jump()
         {
+            jumpsUsed++;
             body.linearVelocity = new Vector2(body.linearVelocity.x, jumpForce);
             groundContacts = 0;
         }
@@ -103,7 +112,7 @@ namespace AjouFestival.Games.AjouBoontu
             if (collision.collider.GetComponent<RunnerPlatform>() != null)
             {
                 groundContacts++;
-                GetComponent<WireActionController>()?.ResetWireOnGrounded();
+                jumpsUsed = 0;
             }
         }
 

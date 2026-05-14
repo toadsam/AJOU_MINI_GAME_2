@@ -82,25 +82,25 @@ namespace AjouBuntu.Editor
             }
 
             config.EnsureDefaults();
-            config.bgCampusDay = FindSprite("bg_campus_day.png");
-            config.bgCampusSunset = FindSprite("bg_campus_sunset.png");
-            config.bgCampusNight = FindSprite("bg_campus_night.png");
-            config.playerSpriteSheet = FindTexture("chito-sprite-sheet.png");
+            config.bgCampusDay = null;
+            config.bgCampusSunset = null;
+            config.bgCampusNight = null;
+            config.playerSpriteSheet = null;
 
-            AssignPlatformSprite(config, PlatformKind.StoneBridge, "platform_stone_bridge.png");
-            AssignPlatformSprite(config, PlatformKind.Stairs, "platform_stairs.png");
-            AssignPlatformSprite(config, PlatformKind.Rooftop, "platform_rooftop.png");
-            AssignPlatformSprite(config, PlatformKind.LibraryShelf, "platform_library_shelf.png");
-            AssignPlatformSprite(config, PlatformKind.FestivalBooth, "platform_festival_booth.png");
-            AssignPlatformSprite(config, PlatformKind.BusStop, "platform_bus_stop.png");
+            AssignPlatformSprite(config, PlatformKind.StoneBridge, null);
+            AssignPlatformSprite(config, PlatformKind.Stairs, null);
+            AssignPlatformSprite(config, PlatformKind.Rooftop, null);
+            AssignPlatformSprite(config, PlatformKind.LibraryShelf, null);
+            AssignPlatformSprite(config, PlatformKind.FestivalBooth, null);
+            AssignPlatformSprite(config, PlatformKind.BusStop, null);
 
-            AssignItemSprite(config, ItemKind.APlus, "item_aplus.png");
-            AssignItemSprite(config, ItemKind.IdCard, "item_idcard.png");
-            AssignItemSprite(config, ItemKind.Coffee, "item_a.png");
-            AssignItemSprite(config, ItemKind.Attendance, "item_attendance.png");
-            AssignItemSprite(config, ItemKind.MealTicket, "item_mealticket.png");
-            AssignItemSprite(config, ItemKind.Coupon, "item_coupon.png");
-            AssignItemSprite(config, ItemKind.Sticker, "item_sticker.png");
+            AssignItemSprite(config, ItemKind.APlus, null);
+            AssignItemSprite(config, ItemKind.IdCard, null);
+            AssignItemSprite(config, ItemKind.Coffee, null);
+            AssignItemSprite(config, ItemKind.Attendance, null);
+            AssignItemSprite(config, ItemKind.MealTicket, null);
+            AssignItemSprite(config, ItemKind.Coupon, null);
+            AssignItemSprite(config, ItemKind.Sticker, null);
 
             EditorUtility.SetDirty(config);
             return config;
@@ -109,13 +109,13 @@ namespace AjouBuntu.Editor
         private static void AssignPlatformSprite(GameConfig config, PlatformKind kind, string fileName)
         {
             PlatformDefinition definition = config.GetPlatform(kind);
-            definition.sprite = FindSprite(fileName);
+            definition.sprite = string.IsNullOrEmpty(fileName) ? null : FindSprite(fileName);
         }
 
         private static void AssignItemSprite(GameConfig config, ItemKind kind, string fileName)
         {
             ItemDefinition definition = config.GetItem(kind);
-            definition.sprite = FindSprite(fileName);
+            definition.sprite = string.IsNullOrEmpty(fileName) ? null : FindSprite(fileName);
         }
 
         private static void CreateScene(string sceneName, SceneRole role, GameConfig config)

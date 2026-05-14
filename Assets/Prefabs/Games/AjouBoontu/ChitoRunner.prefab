@@ -180,13 +180,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0656add9f6317e64f8d3371de8d9336d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AjouFestival.Games.AjouBoontu.ChitoRunnerController
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 7717640394288547812}
   runSprite: {fileID: 0}
   jumpSprite: {fileID: 0}
   fallSprite: {fileID: 0}
   runSpeed: 5.8
   jumpForce: 11
   fallDeathY: -7
+  maxJumpCount: 2
 --- !u!114 &5606524181498536647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,7 +195,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3874302335580819722}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 61cf02f4c323eed40bfb3c62eb7d17d5, type: 3}
   m_Name: 

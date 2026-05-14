@@ -21,18 +21,18 @@ namespace AjouFestival.Games.AjouBoontu
 
         private void Start()
         {
-            if (hintText != null) hintText.text = "Space/클릭: 점프   공중에서 길게 누르기: 와이어   R: 재시작   ESC: 선택";
+            if (hintText != null) hintText.text = "Space/Click: Jump, Double Jump   R: Restart   ESC: Select";
             if (exitButton != null) exitButton.onClick.AddListener(SceneLoader.LoadGameSelect);
         }
 
         public void SetScore(int score)
         {
-            if (scoreText != null) scoreText.text = $"점수 {score:N0}";
+            if (scoreText != null) scoreText.text = $"Score {score:N0}";
         }
 
         public void SetBestScore(int bestScore)
         {
-            if (bestScoreText != null) bestScoreText.text = $"최고 {bestScore:N0}";
+            if (bestScoreText != null) bestScoreText.text = $"Best {bestScore:N0}";
         }
     }
 }
