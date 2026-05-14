@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13a7062f5f2ad1b4d88d4cfa10d152aa, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: Assembly-CSharp::AjouBuntu.Config.GameConfig
+  logicalSize: {x: 960, y: 540}
+  playerStartScreenPosition: {x: 170, y: 402}
+  gravity: 2050
+  initialSpeed: 350
+  maxSpeed: 780
+  speedIncreasePer900Ms: 10.5
+  jumpSpeed: -820
+  targetDistance: 24000
+  scorePerSecond: 12
+  deathLineScreenY: 650
+  coyoteTime: 0.11
+  maxAirJumps: 1
+  landingDuration: 0.11
+  spawnX: 1120
+  despawnX: -260
+  platformTopMinScreenY: 130
+  platformTopMaxScreenY: 448
+  easyGapMin: 110
+  easyGapMax: 175
+  hardGapMin: 155
+  hardGapMax: 245
+  platformMinWidth: 280
+  platformMaxWidth: 430
+  wireEnabled: 0
+  obstacleEnabled: 0
+  bgCampusDay: {fileID: 0}
+  bgCampusSunset: {fileID: 0}
+  bgCampusNight: {fileID: 0}
+  playerSpriteSheet: {fileID: 0}
+  items:
+  - kind: 0
+    score: 100
+    sprite: {fileID: 0}
+  - kind: 1
+    score: 50
+    sprite: {fileID: 0}
+  - kind: 2
+    score: 30
+    sprite: {fileID: 0}
+  - kind: 3
+    score: 70
+    sprite: {fileID: 0}
+  - kind: 4
+    score: 80
+    sprite: {fileID: 0}
+  - kind: 5
+    score: 60
+    sprite: {fileID: 0}
+  - kind: 6
+    score: 40
+    sprite: {fileID: 0}
+  platforms:
+  - kind: 0
+    sprite: {fileID: 0}
+    visualSize: {x: 340, y: 74}
+    colliderSize: {x: 316, y: 16}
+    colliderOffset: {x: 0, y: 29}
+  - kind: 1
+    sprite: {fileID: 0}
+    visualSize: {x: 320, y: 86}
+    colliderSize: {x: 290, y: 18}
+    colliderOffset: {x: 0, y: 34}
+  - kind: 2
+    sprite: {fileID: 0}
+    visualSize: {x: 360, y: 76}
+    colliderSize: {x: 330, y: 18}
+    colliderOffset: {x: 0, y: 31}
+  - kind: 3
+    sprite: {fileID: 0}
+    visualSize: {x: 300, y: 92}
+    colliderSize: {x: 280, y: 18}
+    colliderOffset: {x: 0, y: 37}
+  - kind: 4
+    sprite: {fileID: 0}
+    visualSize: {x: 350, y: 96}
+    colliderSize: {x: 310, y: 18}
+    colliderOffset: {x: 0, y: 39}
+  - kind: 5
+    sprite: {fileID: 0}
+    visualSize: {x: 330, y: 86}
+    colliderSize: {x: 300, y: 18}
+    colliderOffset: {x: 0, y: 34}
+  obstacles:
+  - kind: 0
+    sprite: {fileID: 0}
+    colliderSize: {x: 48, y: 48}
+  - kind: 1
+    sprite: {fileID: 0}
+    colliderSize: {x: 48, y: 48}
+  - kind: 2
+    sprite: {fileID: 0}
+    colliderSize: {x: 48, y: 48}
+  - kind: 3
+    sprite: {fileID: 0}
+    colliderSize: {x: 48, y: 48}

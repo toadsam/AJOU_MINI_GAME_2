@@ -6,8 +6,23 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
+    path: Assets/Scenes/00_MainMenu.unity
+    guid: f829d00149b128d4f867efc25ee75ac9
+  - enabled: 1
+    path: Assets/Scenes/01_GameSelect.unity
+    guid: 7b2d0dd1f7f945341b150774fe30042b
+  - enabled: 1
+    path: Assets/Scenes/02_AjouBoontu.unity
+    guid: fad0a11c968f4324682da432ce102b63
+  - enabled: 1
+    path: Assets/Scenes/03_BalanceWalk.unity
+    guid: cc8659d880e75cf478d2d7e6b8513c16
+  - enabled: 1
+    path: Assets/Scenes/04_OneVsOneSoccer.unity
+    guid: 6291194ee8cfbe24aa80a9f81ab94f97
+  - enabled: 1
+    path: Assets/Scenes/05_Result.unity
+    guid: d6f258af70eac374d9de8dfcf9727fd5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
