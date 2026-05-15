@@ -26,8 +26,10 @@ namespace AjouFestival.Games.AjouBoontu
         private int groundContacts;
         private int jumpsUsed;
         private VisualState currentVisualState = VisualState.Idle;
+        private bool isRunning;
 
         public bool IsGrounded => groundContacts > 0;
+        public bool IsRunning => isRunning;
         public bool IsGameOver => gameManager != null && gameManager.IsGameOver;
         public Rigidbody2D Body => body;
         public float RunSpeed => runSpeed;
@@ -43,6 +45,7 @@ namespace AjouFestival.Games.AjouBoontu
         public void Initialize(AjouBoontuGameManager manager)
         {
             gameManager = manager;
+            isRunning = false;
         }
 
         private void Awake()
@@ -63,7 +66,7 @@ namespace AjouFestival.Games.AjouBoontu
 
         private void Update()
         {
-            if (IsGameOver)
+            if (!isRunning || IsGameOver)
             {
                 body.linearVelocity = new Vector2(0f, body.linearVelocity.y);
                 return;
@@ -87,12 +90,23 @@ namespace AjouFestival.Games.AjouBoontu
 
         private void FixedUpdate()
         {
-            if (IsGameOver)
+            if (!isRunning || IsGameOver)
             {
                 return;
             }
 
             body.linearVelocity = new Vector2(runSpeed, body.linearVelocity.y);
+        }
+
+        public void SetRunning(bool running)
+        {
+            isRunning = running;
+            if (!isRunning)
+            {
+                body.linearVelocity = new Vector2(0f, body.linearVelocity.y);
+                jumpsUsed = 0;
+                ApplyVisualState(true);
+            }
         }
 
         private bool CanJump()
@@ -132,6 +146,11 @@ namespace AjouFestival.Games.AjouBoontu
 
         private VisualState ResolveVisualState()
         {
+            if (!IsRunning)
+            {
+                return VisualState.Idle;
+            }
+
             if (IsGameOver)
             {
                 return VisualState.Idle;
@@ -175,6 +194,11 @@ namespace AjouFestival.Games.AjouBoontu
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (!isRunning || IsGameOver)
+            {
+                return;
+            }
+
             RunnerItem item = other.GetComponent<RunnerItem>();
             if (item != null)
             {

@@ -47,7 +47,7 @@ namespace AjouFestival.Games.AjouBoontu
 
         private void Update()
         {
-            if (runner == null || runner.IsGameOver)
+            if (runner == null || !runner.IsRunning || runner.IsGameOver)
             {
                 EndWire();
                 return;
@@ -84,6 +84,16 @@ namespace AjouFestival.Games.AjouBoontu
 
         private void FixedUpdate()
         {
+            if (runner == null || !runner.IsRunning)
+            {
+                if (lineRenderer != null)
+                {
+                    lineRenderer.enabled = false;
+                }
+
+                return;
+            }
+
             if (!IsWiring)
             {
                 return;
@@ -100,6 +110,18 @@ namespace AjouFestival.Games.AjouBoontu
             HasUsedWireThisJump = false;
             AirTime = 0f;
             EndWire();
+        }
+
+        public void ResetForStart()
+        {
+            HasUsedWireThisJump = false;
+            AirTime = 0f;
+            WireTimer = 0f;
+            IsWiring = false;
+            if (lineRenderer != null)
+            {
+                lineRenderer.enabled = false;
+            }
         }
 
         private bool CanStartWire(bool held)
