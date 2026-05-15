@@ -10,6 +10,11 @@ namespace AjouFestival.Games.Soccer
         [SerializeField] private int playerIndex = 1;
         [SerializeField] private SpriteRenderer spriteRenderer;
         [SerializeField] private Sprite playerSprite;
+        [SerializeField] private Sprite[] runFrames;
+        [SerializeField] private Sprite[] jumpFrames;
+        [SerializeField] private Sprite[] fallFrames;
+        [SerializeField] private float runAnimationFps = 12f;
+        [SerializeField] private float airAnimationFps = 10f;
         [SerializeField] private float moveSpeed = 7.25f;
         [SerializeField] private float jumpForce = 10f;
         [SerializeField] private float airControl = 0.9f;
@@ -26,6 +31,14 @@ namespace AjouFestival.Games.Soccer
         {
             Human,
             AI
+        }
+
+        private enum VisualState
+        {
+            Idle,
+            Run,
+            Jump,
+            Fall
         }
 
         private readonly struct AIProfile
@@ -64,6 +77,8 @@ namespace AjouFestival.Games.Soccer
         private float aiMoveInput;
         private float aiDecisionTimer;
         private float aiKickCooldownTimer;
+        private VisualState currentVisualState = VisualState.Idle;
+        private float visualStateTime;
 
         public void Initialize(SoccerGameManager manager, SoccerBallController soccerBall)
         {
@@ -114,6 +129,7 @@ namespace AjouFestival.Games.Soccer
 
             facingDirection = playerIndex == 1 ? 1f : -1f;
             ApplyFacing();
+            UpdateVisualAnimation(true);
         }
 
         private void FixedUpdate()
@@ -176,6 +192,11 @@ namespace AjouFestival.Games.Soccer
             }
         }
 
+        private void LateUpdate()
+        {
+            UpdateVisualAnimation();
+        }
+
         public void ResetPosition(Vector3 position)
         {
             transform.position = position;
@@ -188,6 +209,7 @@ namespace AjouFestival.Games.Soccer
             aiKickCooldownTimer = 0f;
             facingDirection = position.x <= 0f ? 1f : -1f;
             ApplyFacing();
+            UpdateVisualAnimation(true);
         }
 
         private void UpdateAI()
@@ -369,6 +391,75 @@ namespace AjouFestival.Games.Soccer
             {
                 spriteRenderer.flipX = facingDirection < 0f;
             }
+        }
+
+        private void UpdateVisualAnimation(bool forceReset = false)
+        {
+            if (spriteRenderer == null)
+            {
+                return;
+            }
+
+            VisualState nextState = ResolveVisualState();
+            if (forceReset || nextState != currentVisualState)
+            {
+                currentVisualState = nextState;
+                visualStateTime = 0f;
+            }
+            else
+            {
+                visualStateTime += Time.deltaTime;
+            }
+
+            Sprite sprite = ResolveVisualSprite(currentVisualState, visualStateTime);
+            if (sprite != null)
+            {
+                spriteRenderer.sprite = sprite;
+            }
+        }
+
+        private VisualState ResolveVisualState()
+        {
+            if (!isGrounded)
+            {
+                return body.linearVelocity.y >= 0f ? VisualState.Jump : VisualState.Fall;
+            }
+
+            return Mathf.Abs(body.linearVelocity.x) > 0.15f ? VisualState.Run : VisualState.Idle;
+        }
+
+        private Sprite ResolveVisualSprite(VisualState state, float elapsedTime)
+        {
+            return state switch
+            {
+                VisualState.Idle => playerSprite,
+                VisualState.Run => GetAnimatedFrame(runFrames, runAnimationFps, elapsedTime) ?? playerSprite,
+                VisualState.Jump => GetAnimatedFrame(jumpFrames, airAnimationFps, elapsedTime) ?? playerSprite,
+                VisualState.Fall => GetAnimatedFrame(fallFrames, airAnimationFps, elapsedTime) ?? playerSprite,
+                _ => playerSprite
+            };
+        }
+
+        private static Sprite GetAnimatedFrame(Sprite[] frames, float framesPerSecond, float elapsedTime)
+        {
+            if (frames == null || frames.Length == 0)
+            {
+                return null;
+            }
+
+            if (frames.Length == 1 || framesPerSecond <= 0f)
+            {
+                return frames[0];
+            }
+
+            int frameIndex = Mathf.FloorToInt(elapsedTime * framesPerSecond);
+            frameIndex %= frames.Length;
+            if (frameIndex < 0)
+            {
+                frameIndex += frames.Length;
+            }
+
+            return frames[frameIndex];
         }
 
         private static AIProfile GetAIProfile(SoccerAIDifficulty difficulty)
