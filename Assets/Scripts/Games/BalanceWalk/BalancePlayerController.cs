@@ -165,9 +165,9 @@ namespace AjouFestival.Games.BalanceWalk
                 visualAnchor.localScale = Vector3.one;
             }
 
-            bodyCircle = EnsurePart(ref bodyCircle, "BodyCircle", circleSprite, new Vector3(0f, 1.34f, 0f), new Vector3(0.62f, 0.62f, 1f), 2, BodyColor);
-            leftLeg = EnsurePart(ref leftLeg, "LeftLeg", stickSprite, new Vector3(-0.24f, -0.5f, 0f), new Vector3(0.08f, 1.18f, 1f), 0, LegColor);
-            rightLeg = EnsurePart(ref rightLeg, "RightLeg", stickSprite, new Vector3(0.24f, -0.5f, 0f), new Vector3(0.08f, 1.18f, 1f), 0, LegColor);
+            bodyCircle = EnsurePart(ref bodyCircle, "BodyCircle", circleSprite, new Vector3(0f, 1.34f, 0f), new Vector3(0.38f, 0.38f, 1f), 2, BodyColor);
+            leftLeg = EnsurePart(ref leftLeg, "LeftLeg", stickSprite, new Vector3(-0.24f, -0.44f, 0f), new Vector3(0.24f, 1.04f, 1f), 0, LegColor);
+            rightLeg = EnsurePart(ref rightLeg, "RightLeg", stickSprite, new Vector3(0.24f, -0.44f, 0f), new Vector3(0.24f, 1.04f, 1f), 0, LegColor);
 
             partTransforms = new[]
             {
