@@ -58,6 +58,14 @@ namespace AjouFestival.Core
 
             return key switch
             {
+                KeyCode.A => Keyboard.current.aKey.wasPressedThisFrame,
+                KeyCode.D => Keyboard.current.dKey.wasPressedThisFrame,
+                KeyCode.W => Keyboard.current.wKey.wasPressedThisFrame,
+                KeyCode.S => Keyboard.current.sKey.wasPressedThisFrame,
+                KeyCode.LeftArrow => Keyboard.current.leftArrowKey.wasPressedThisFrame,
+                KeyCode.RightArrow => Keyboard.current.rightArrowKey.wasPressedThisFrame,
+                KeyCode.UpArrow => Keyboard.current.upArrowKey.wasPressedThisFrame,
+                KeyCode.DownArrow => Keyboard.current.downArrowKey.wasPressedThisFrame,
                 KeyCode.Space => Keyboard.current.spaceKey.wasPressedThisFrame,
                 KeyCode.Return => Keyboard.current.enterKey.wasPressedThisFrame,
                 KeyCode.KeypadEnter => Keyboard.current.numpadEnterKey.wasPressedThisFrame,

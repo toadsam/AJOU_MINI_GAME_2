@@ -509,7 +509,7 @@ public static class MiniGameProjectBuilder
         CreateText(canvas.transform, "TitleText", "게임 선택", 48, TextAnchor.MiddleCenter, new Vector2(0.5f, 0.88f), new Vector2(420f, 64f), Vector2.zero);
         CreateGameCard(canvas.transform, "AjouBoontuCard", "아주분투", "A+를 향해 캠퍼스를 질주하라!", "Space / 마우스 클릭 / 길게 누르기", new Vector2(-310f, 40f), true);
         CreateGameCard(canvas.transform, "BalanceWalkCard", "치토 균형걷기", "넘어지지 않고 오래 버텨라!", "A/D 또는 ←/→", new Vector2(0f, 40f), true);
-        CreateGameCard(canvas.transform, "SoccerCard", "아주 1대1 축구", "친구와 60초 승부!", "P1 WASD / P2 방향키", new Vector2(310f, 40f), true);
+        CreateGameCard(canvas.transform, "SoccerCard", "아주 1대1 축구", "친구와 60초 승부!", "P1 A/D W Space / P2 Arrows Up Enter", new Vector2(310f, 40f), true);
         CreateGameCard(canvas.transform, "ComingSoonCard1", "Coming Soon", "다음 축제 게임 준비중", "-", new Vector2(-155f, -205f), false);
         CreateGameCard(canvas.transform, "ComingSoonCard2", "Coming Soon", "다음 축제 게임 준비중", "-", new Vector2(155f, -205f), false);
         CreateButton(canvas.transform, "MainMenuButton", "메인으로", new Vector2(0f, -255f), new Vector2(190f, 52f), null);

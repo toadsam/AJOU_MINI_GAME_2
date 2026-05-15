@@ -171,5 +171,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AjouFestival.Games.Soccer.SoccerBallController
   spriteRenderer: {fileID: 0}
   ballSprite: {fileID: 0}
-  maxSpeed: 12
-  linearDamping: 1.2
+  maxSpeed: 16
+  linearDamping: 0.35

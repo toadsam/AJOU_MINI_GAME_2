@@ -21,13 +21,17 @@ namespace AjouFestival.Games.Soccer
 
         private void Start()
         {
-            if (hintText != null) hintText.text = "P1: WASD + Space 슛   P2: 방향키 + Enter/RightCtrl 슛   R: 재시작   ESC: 선택";
+            if (hintText != null)
+            {
+                hintText.text = "P1 A/D move, W jump, Space or S kick   P2 Left/Right move, Up jump, Enter, Ctrl or Down kick   R restart   ESC menu";
+            }
+
             if (exitButton != null) exitButton.onClick.AddListener(SceneLoader.LoadGameSelect);
         }
 
         public void SetMatch(float timeRemaining, int p1Score, int p2Score)
         {
-            if (timeText != null) timeText.text = $"남은 시간 {Mathf.CeilToInt(timeRemaining)}";
+            if (timeText != null) timeText.text = $"Time {Mathf.CeilToInt(timeRemaining)}";
             if (scoreText != null) scoreText.text = $"P1 {p1Score} : {p2Score} P2";
         }
     }

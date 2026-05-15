@@ -172,6 +172,6 @@ MonoBehaviour:
   playerIndex: 1
   spriteRenderer: {fileID: 0}
   playerSprite: {fileID: 0}
-  moveSpeed: 6
-  kickForce: 11
-  kickRange: 1.25
+  moveSpeed: 7.25
+  kickForce: 9.5
+  kickRange: 1.7

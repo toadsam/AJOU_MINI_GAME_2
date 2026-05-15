@@ -10,6 +10,14 @@ namespace AjouFestival.Games.Soccer
         [SerializeField] private SoccerBallController ball;
         [SerializeField] private SoccerUI ui;
         [SerializeField] private float matchDuration = 60f;
+        [SerializeField] private Vector2 player1Spawn = new Vector2(-4.6f, -3.2f);
+        [SerializeField] private Vector2 player2Spawn = new Vector2(4.6f, -3.2f);
+        [SerializeField] private Vector2 ballSpawn = new Vector2(0f, -2.55f);
+        [SerializeField] private Vector2 leftGoalPosition = new Vector2(-7.1f, -3.25f);
+        [SerializeField] private Vector2 rightGoalPosition = new Vector2(7.1f, -3.25f);
+        [SerializeField] private Vector2 goalTriggerSize = new Vector2(0.9f, 2f);
+        [SerializeField] private Vector2 cameraCenter = new Vector2(0f, -0.35f);
+        [SerializeField] private float cameraSize = 5f;
 
         public int Player1Score { get; private set; }
         public int Player2Score { get; private set; }
@@ -18,6 +26,7 @@ namespace AjouFestival.Games.Soccer
 
         private Vector3 player1Start;
         private Vector3 player2Start;
+        private Vector3 ballStart;
 
         private void Awake()
         {
@@ -38,11 +47,13 @@ namespace AjouFestival.Games.Soccer
         private void Start()
         {
             GameSessionManager.Ensure().StartGame(GameType.Soccer, SceneLoader.SoccerScene);
+            ConfigureArena();
             TimeRemaining = matchDuration;
-            if (player1 != null) player1Start = player1.transform.position;
-            if (player2 != null) player2Start = player2.transform.position;
+
             if (player1 != null) player1.Initialize(this, ball);
             if (player2 != null) player2.Initialize(this, ball);
+
+            ResetPositions();
             UpdateUI();
         }
 
@@ -72,6 +83,7 @@ namespace AjouFestival.Games.Soccer
 
             if (scoringPlayer == 1) Player1Score++;
             if (scoringPlayer == 2) Player2Score++;
+
             ResetPositions();
             UpdateUI();
         }
@@ -80,15 +92,17 @@ namespace AjouFestival.Games.Soccer
         {
             if (player1 != null) player1.ResetPosition(player1Start);
             if (player2 != null) player2.ResetPosition(player2Start);
-            if (ball != null) ball.ResetPosition(Vector3.zero);
+            if (ball != null) ball.ResetPosition(ballStart);
         }
 
         private void FinishMatch()
         {
             IsFinished = true;
+
             string result = Player1Score == Player2Score
-                ? "무승부!"
-                : Player1Score > Player2Score ? "Player 1 승리!" : "Player 2 승리!";
+                ? "Draw!"
+                : Player1Score > Player2Score ? "Player 1 Wins!" : "Player 2 Wins!";
+
             int winnerScore = Mathf.Max(Player1Score, Player2Score);
             GameSessionManager.Ensure().SetResult(winnerScore, result, $"P1 {Player1Score} : {Player2Score} P2");
             SceneLoader.LoadResult();
@@ -99,6 +113,43 @@ namespace AjouFestival.Games.Soccer
             if (ui != null)
             {
                 ui.SetMatch(TimeRemaining, Player1Score, Player2Score);
+            }
+        }
+
+        private void ConfigureArena()
+        {
+            player1Start = new Vector3(player1Spawn.x, player1Spawn.y, 0f);
+            player2Start = new Vector3(player2Spawn.x, player2Spawn.y, 0f);
+            ballStart = new Vector3(ballSpawn.x, ballSpawn.y, 0f);
+
+            ConfigureGoal("SoccerGoalLeft", leftGoalPosition);
+            ConfigureGoal("SoccerGoalRight", rightGoalPosition);
+
+            Camera mainCamera = Camera.main;
+            if (mainCamera != null)
+            {
+                mainCamera.orthographic = true;
+                mainCamera.orthographicSize = cameraSize;
+                mainCamera.transform.position = new Vector3(cameraCenter.x, cameraCenter.y, mainCamera.transform.position.z);
+            }
+        }
+
+        private void ConfigureGoal(string goalName, Vector2 position)
+        {
+            GameObject goalObject = GameObject.Find(goalName);
+            if (goalObject == null)
+            {
+                return;
+            }
+
+            goalObject.transform.position = new Vector3(position.x, position.y, goalObject.transform.position.z);
+
+            BoxCollider2D goalCollider = goalObject.GetComponent<BoxCollider2D>();
+            if (goalCollider != null)
+            {
+                goalCollider.isTrigger = true;
+                goalCollider.offset = Vector2.zero;
+                goalCollider.size = goalTriggerSize;
             }
         }
     }
