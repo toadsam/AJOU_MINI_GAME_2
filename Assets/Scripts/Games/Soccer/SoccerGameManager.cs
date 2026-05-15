@@ -13,11 +13,16 @@ namespace AjouFestival.Games.Soccer
         [SerializeField] private Vector2 player1Spawn = new Vector2(-4.6f, -3.2f);
         [SerializeField] private Vector2 player2Spawn = new Vector2(4.6f, -3.2f);
         [SerializeField] private Vector2 ballSpawn = new Vector2(0f, -2.55f);
-        [SerializeField] private Vector2 leftGoalPosition = new Vector2(-7.1f, -3.25f);
-        [SerializeField] private Vector2 rightGoalPosition = new Vector2(7.1f, -3.25f);
+        [SerializeField] private float goalYPosition = -3.25f;
         [SerializeField] private Vector2 goalTriggerSize = new Vector2(0.9f, 2f);
         [SerializeField] private Vector2 cameraCenter = new Vector2(0f, -0.35f);
         [SerializeField] private float cameraSize = 5f;
+        [SerializeField] private float sideWallOffsetFromGoal = 0.7f;
+        [SerializeField] private float sideWallHeight = 8.2f;
+        [SerializeField] private float topWallY = 4.2f;
+        [SerializeField] private float bottomWallY = -4.2f;
+        [SerializeField] private float horizontalWallThickness = 0.35f;
+        [SerializeField] private float verticalWallThickness = 0.3f;
 
         public int Player1Score { get; private set; }
         public int Player2Score { get; private set; }
@@ -191,8 +196,9 @@ namespace AjouFestival.Games.Soccer
             player2Start = new Vector3(player2Spawn.x, player2Spawn.y, 0f);
             ballStart = new Vector3(ballSpawn.x, ballSpawn.y, 0f);
 
-            ConfigureGoal("SoccerGoalLeft", leftGoalPosition);
-            ConfigureGoal("SoccerGoalRight", rightGoalPosition);
+            Transform leftGoal = ConfigureGoal("SoccerGoalLeft");
+            Transform rightGoal = ConfigureGoal("SoccerGoalRight");
+            ConfigureBoundaryWalls(leftGoal, rightGoal);
 
             Camera mainCamera = Camera.main;
             if (mainCamera != null)
@@ -203,15 +209,17 @@ namespace AjouFestival.Games.Soccer
             }
         }
 
-        private void ConfigureGoal(string goalName, Vector2 position)
+        private Transform ConfigureGoal(string goalName)
         {
             GameObject goalObject = GameObject.Find(goalName);
             if (goalObject == null)
             {
-                return;
+                return null;
             }
 
-            goalObject.transform.position = new Vector3(position.x, position.y, goalObject.transform.position.z);
+            Vector3 goalPosition = goalObject.transform.position;
+            goalPosition.y = goalYPosition;
+            goalObject.transform.position = goalPosition;
 
             BoxCollider2D goalCollider = goalObject.GetComponent<BoxCollider2D>();
             if (goalCollider != null)
@@ -219,6 +227,44 @@ namespace AjouFestival.Games.Soccer
                 goalCollider.isTrigger = true;
                 goalCollider.offset = Vector2.zero;
                 goalCollider.size = goalTriggerSize;
+            }
+
+            return goalObject.transform;
+        }
+
+        private void ConfigureBoundaryWalls(Transform leftGoal, Transform rightGoal)
+        {
+            if (leftGoal == null || rightGoal == null)
+            {
+                return;
+            }
+
+            float leftWallX = leftGoal.position.x - sideWallOffsetFromGoal;
+            float rightWallX = rightGoal.position.x + sideWallOffsetFromGoal;
+            float wallCenterX = (leftWallX + rightWallX) * 0.5f;
+            float wallWidth = Mathf.Abs(rightWallX - leftWallX) + verticalWallThickness;
+
+            ConfigureWall("LeftBackWall", new Vector2(leftWallX, 0f), new Vector2(verticalWallThickness, sideWallHeight));
+            ConfigureWall("RightBackWall", new Vector2(rightWallX, 0f), new Vector2(verticalWallThickness, sideWallHeight));
+            ConfigureWall("TopWall", new Vector2(wallCenterX, topWallY), new Vector2(wallWidth, horizontalWallThickness));
+            ConfigureWall("BottomWall", new Vector2(wallCenterX, bottomWallY), new Vector2(wallWidth, horizontalWallThickness));
+        }
+
+        private static void ConfigureWall(string wallName, Vector2 position, Vector2 size)
+        {
+            GameObject wallObject = GameObject.Find(wallName);
+            if (wallObject == null)
+            {
+                return;
+            }
+
+            wallObject.transform.position = new Vector3(position.x, position.y, wallObject.transform.position.z);
+
+            BoxCollider2D wallCollider = wallObject.GetComponent<BoxCollider2D>();
+            if (wallCollider != null)
+            {
+                wallCollider.offset = Vector2.zero;
+                wallCollider.size = size;
             }
         }
 
