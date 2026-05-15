@@ -30,6 +30,7 @@ namespace AjouFestival.Games.AjouBoontu
         public bool IsGrounded => groundContacts > 0;
         public bool IsGameOver => gameManager != null && gameManager.IsGameOver;
         public Rigidbody2D Body => body;
+        public float RunSpeed => runSpeed;
 
         private enum VisualState
         {
@@ -104,6 +105,11 @@ namespace AjouFestival.Games.AjouBoontu
             jumpsUsed++;
             body.linearVelocity = new Vector2(body.linearVelocity.x, jumpForce);
             groundContacts = 0;
+        }
+
+        public void SetRunSpeed(float speed)
+        {
+            runSpeed = Mathf.Max(0f, speed);
         }
 
         private void ApplyVisualState(bool forceRestart = false)
