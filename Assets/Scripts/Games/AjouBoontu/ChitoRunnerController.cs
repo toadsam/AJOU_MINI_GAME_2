@@ -8,10 +8,7 @@ namespace AjouFestival.Games.AjouBoontu
     public sealed class ChitoRunnerController : MonoBehaviour
     {
         [Header("Visual")]
-        [SerializeField] private SpriteRenderer spriteRenderer;
-        [SerializeField] private Sprite runSprite;
-        [SerializeField] private Sprite jumpSprite;
-        [SerializeField] private Sprite fallSprite;
+        [SerializeField] private Animator animator;
 
         [Header("Movement")]
         [SerializeField] private float runSpeed = 5.8f;
@@ -19,14 +16,28 @@ namespace AjouFestival.Games.AjouBoontu
         [SerializeField] private float fallDeathY = -7f;
         [SerializeField, Min(1)] private int maxJumpCount = 2;
 
+        private static readonly int IdleStateHash = Animator.StringToHash("Base Layer.Idle");
+        private static readonly int RunStateHash = Animator.StringToHash("Base Layer.Run");
+        private static readonly int JumpStateHash = Animator.StringToHash("Base Layer.Jump");
+        private static readonly int FallStateHash = Animator.StringToHash("Base Layer.Fall");
+
         private Rigidbody2D body;
         private AjouBoontuGameManager gameManager;
         private int groundContacts;
         private int jumpsUsed;
+        private VisualState currentVisualState = VisualState.Idle;
 
         public bool IsGrounded => groundContacts > 0;
         public bool IsGameOver => gameManager != null && gameManager.IsGameOver;
         public Rigidbody2D Body => body;
+
+        private enum VisualState
+        {
+            Idle,
+            Run,
+            Jump,
+            Fall
+        }
 
         public void Initialize(AjouBoontuGameManager manager)
         {
@@ -38,9 +49,15 @@ namespace AjouFestival.Games.AjouBoontu
             body = GetComponent<Rigidbody2D>();
             body.freezeRotation = true;
             body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            body.interpolation = RigidbodyInterpolation2D.Interpolate;
             maxJumpCount = Mathf.Max(1, maxJumpCount);
-            if (spriteRenderer == null) spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-            if (spriteRenderer == null) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+
+            if (animator == null)
+            {
+                animator = GetComponentInChildren<Animator>();
+            }
+
+            ApplyVisualState(true);
         }
 
         private void Update()
@@ -56,12 +73,15 @@ namespace AjouFestival.Games.AjouBoontu
                 Jump();
             }
 
-            UpdateVisualState();
-
             if (transform.position.y < fallDeathY)
             {
-                gameManager?.GameOver("발판 아래로 떨어졌습니다.");
+                gameManager?.GameOver("諛쒗뙋 ?꾨옒濡??⑥뼱議뚯뒿?덈떎.");
             }
+        }
+
+        private void LateUpdate()
+        {
+            ApplyVisualState();
         }
 
         private void FixedUpdate()
@@ -86,25 +106,48 @@ namespace AjouFestival.Games.AjouBoontu
             groundContacts = 0;
         }
 
-        private void UpdateVisualState()
+        private void ApplyVisualState(bool forceRestart = false)
         {
-            if (spriteRenderer == null)
+            if (animator == null)
             {
                 return;
             }
 
-            if (IsGrounded && runSprite != null)
+            VisualState nextState = ResolveVisualState();
+            if (!forceRestart && nextState == currentVisualState)
             {
-                spriteRenderer.sprite = runSprite;
+                return;
             }
-            else if (body.linearVelocity.y >= 0f && jumpSprite != null)
+
+            currentVisualState = nextState;
+            animator.Play(GetStateHash(nextState), 0, 0f);
+            animator.Update(0f);
+        }
+
+        private VisualState ResolveVisualState()
+        {
+            if (IsGameOver)
             {
-                spriteRenderer.sprite = jumpSprite;
+                return VisualState.Idle;
             }
-            else if (body.linearVelocity.y < 0f && fallSprite != null)
+
+            if (!IsGrounded)
             {
-                spriteRenderer.sprite = fallSprite;
+                return body.linearVelocity.y >= 0f ? VisualState.Jump : VisualState.Fall;
             }
+
+            return VisualState.Run;
+        }
+
+        private static int GetStateHash(VisualState state)
+        {
+            return state switch
+            {
+                VisualState.Run => RunStateHash,
+                VisualState.Jump => JumpStateHash,
+                VisualState.Fall => FallStateHash,
+                _ => IdleStateHash
+            };
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -135,7 +178,7 @@ namespace AjouFestival.Games.AjouBoontu
 
             if (other.GetComponent<RunnerObstacle>() != null)
             {
-                gameManager?.GameOver("장애물에 부딪혔습니다.");
+                gameManager?.GameOver("?μ븷臾쇱뿉 遺?ろ삍?듬땲??");
             }
         }
     }
