@@ -19,6 +19,8 @@ namespace AjouFestival.Games.Soccer
         private Rigidbody2D body;
         private CircleCollider2D ballCollider;
 
+        public Vector2 Velocity => body != null ? body.linearVelocity : Vector2.zero;
+
         private void Awake()
         {
             body = GetComponent<Rigidbody2D>();

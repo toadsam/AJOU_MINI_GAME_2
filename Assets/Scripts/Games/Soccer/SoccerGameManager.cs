@@ -23,6 +23,9 @@ namespace AjouFestival.Games.Soccer
         public int Player2Score { get; private set; }
         public float TimeRemaining { get; private set; }
         public bool IsFinished { get; private set; }
+        public bool IsMatchActive { get; private set; }
+        public SoccerMatchMode CurrentMatchMode { get; private set; } = SoccerMatchMode.OneVsOne;
+        public SoccerAIDifficulty CurrentAIDifficulty { get; private set; } = SoccerAIDifficulty.Medium;
 
         private Vector3 player1Start;
         private Vector3 player2Start;
@@ -48,18 +51,18 @@ namespace AjouFestival.Games.Soccer
         {
             GameSessionManager.Ensure().StartGame(GameType.Soccer, SceneLoader.SoccerScene);
             ConfigureArena();
-            TimeRemaining = matchDuration;
 
             if (player1 != null) player1.Initialize(this, ball);
             if (player2 != null) player2.Initialize(this, ball);
 
-            ResetPositions();
+            ResetMatchState();
+            ResolveMatchSelection();
             UpdateUI();
         }
 
         private void Update()
         {
-            if (IsFinished)
+            if (!IsMatchActive || IsFinished)
             {
                 return;
             }
@@ -76,7 +79,7 @@ namespace AjouFestival.Games.Soccer
 
         public void AddGoal(int scoringPlayer)
         {
-            if (IsFinished)
+            if (!IsMatchActive || IsFinished)
             {
                 return;
             }
@@ -86,6 +89,67 @@ namespace AjouFestival.Games.Soccer
 
             ResetPositions();
             UpdateUI();
+        }
+
+        private void ResolveMatchSelection()
+        {
+            GameSessionManager session = GameSessionManager.Ensure();
+            if (session.HasSoccerMatchSelection)
+            {
+                ApplyMatchSelection(session.SoccerMatchMode, session.SoccerAIDifficulty);
+                return;
+            }
+
+            ShowModeSelection();
+        }
+
+        private void ShowModeSelection()
+        {
+            IsMatchActive = false;
+            ResetMatchState();
+
+            if (player1 != null) player1.SetHumanControl();
+            if (player2 != null) player2.SetHumanControl();
+
+            ui?.ShowModeSelection(ApplyMatchSelection);
+            ui?.SetModeHint(null, null);
+        }
+
+        private void ApplyMatchSelection(SoccerMatchMode mode, SoccerAIDifficulty difficulty)
+        {
+            CurrentMatchMode = mode;
+            CurrentAIDifficulty = mode == SoccerMatchMode.VersusAI ? difficulty : SoccerAIDifficulty.Medium;
+
+            GameSessionManager.Ensure().SetSoccerMatchSelection(CurrentMatchMode, CurrentAIDifficulty);
+
+            if (player1 != null) player1.SetHumanControl();
+            if (player2 != null)
+            {
+                if (CurrentMatchMode == SoccerMatchMode.VersusAI)
+                {
+                    player2.SetAIControl(CurrentAIDifficulty);
+                }
+                else
+                {
+                    player2.SetHumanControl();
+                }
+            }
+
+            ResetMatchState();
+            IsMatchActive = true;
+
+            ui?.HideModeSelection();
+            ui?.SetModeHint(CurrentMatchMode, CurrentAIDifficulty);
+            UpdateUI();
+        }
+
+        private void ResetMatchState()
+        {
+            Player1Score = 0;
+            Player2Score = 0;
+            TimeRemaining = matchDuration;
+            IsFinished = false;
+            ResetPositions();
         }
 
         private void ResetPositions()
@@ -98,10 +162,15 @@ namespace AjouFestival.Games.Soccer
         private void FinishMatch()
         {
             IsFinished = true;
+            IsMatchActive = false;
+
+            string player2Name = CurrentMatchMode == SoccerMatchMode.VersusAI
+                ? $"AI {GetDifficultyLabel(CurrentAIDifficulty)}"
+                : "Player 2";
 
             string result = Player1Score == Player2Score
                 ? "Draw!"
-                : Player1Score > Player2Score ? "Player 1 Wins!" : "Player 2 Wins!";
+                : Player1Score > Player2Score ? "Player 1 Wins!" : $"{player2Name} Wins!";
 
             int winnerScore = Mathf.Max(Player1Score, Player2Score);
             GameSessionManager.Ensure().SetResult(winnerScore, result, $"P1 {Player1Score} : {Player2Score} P2");
@@ -151,6 +220,17 @@ namespace AjouFestival.Games.Soccer
                 goalCollider.offset = Vector2.zero;
                 goalCollider.size = goalTriggerSize;
             }
+        }
+
+        private static string GetDifficultyLabel(SoccerAIDifficulty difficulty)
+        {
+            return difficulty switch
+            {
+                SoccerAIDifficulty.Easy => "Easy",
+                SoccerAIDifficulty.Medium => "Medium",
+                SoccerAIDifficulty.Hard => "Hard",
+                _ => "Medium"
+            };
         }
     }
 }

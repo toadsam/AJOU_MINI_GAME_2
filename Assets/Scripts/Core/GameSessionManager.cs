@@ -11,12 +11,18 @@ namespace AjouFestival.Core
         [SerializeField] private string lastScoreText = "0";
         [SerializeField] private string lastResultMessage = "";
         [SerializeField] private string lastPlayedSceneName = "";
+        [SerializeField] private bool hasSoccerMatchSelection;
+        [SerializeField] private SoccerMatchMode soccerMatchMode = SoccerMatchMode.OneVsOne;
+        [SerializeField] private SoccerAIDifficulty soccerAIDifficulty = SoccerAIDifficulty.Medium;
 
         public GameType CurrentGameType => currentGameType;
         public int LastScore => lastScore;
         public string LastScoreText => string.IsNullOrWhiteSpace(lastScoreText) ? lastScore.ToString() : lastScoreText;
         public string LastResultMessage => lastResultMessage;
         public string LastPlayedSceneName => lastPlayedSceneName;
+        public bool HasSoccerMatchSelection => hasSoccerMatchSelection;
+        public SoccerMatchMode SoccerMatchMode => soccerMatchMode;
+        public SoccerAIDifficulty SoccerAIDifficulty => soccerAIDifficulty;
 
         private void Awake()
         {
@@ -56,6 +62,20 @@ namespace AjouFestival.Core
             lastScoreText = string.IsNullOrWhiteSpace(scoreText) ? score.ToString() : scoreText;
             lastResultMessage = resultMessage;
             ScoreRecordManager.SetBestScore(currentGameType, score);
+        }
+
+        public void SetSoccerMatchSelection(SoccerMatchMode mode, SoccerAIDifficulty difficulty)
+        {
+            hasSoccerMatchSelection = true;
+            soccerMatchMode = mode;
+            soccerAIDifficulty = difficulty;
+        }
+
+        public void ClearSoccerMatchSelection()
+        {
+            hasSoccerMatchSelection = false;
+            soccerMatchMode = SoccerMatchMode.OneVsOne;
+            soccerAIDifficulty = SoccerAIDifficulty.Medium;
         }
     }
 }

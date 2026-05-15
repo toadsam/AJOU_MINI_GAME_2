@@ -24,7 +24,7 @@ namespace AjouFestival.UI
             GameSessionManager.Ensure();
             if (ajouBoontuButton != null) ajouBoontuButton.onClick.AddListener(SceneLoader.LoadAjouBoontu);
             if (balanceWalkButton != null) balanceWalkButton.onClick.AddListener(SceneLoader.LoadBalanceWalk);
-            if (soccerButton != null) soccerButton.onClick.AddListener(SceneLoader.LoadSoccer);
+            if (soccerButton != null) soccerButton.onClick.AddListener(() => SceneLoader.LoadSoccer());
             if (mainMenuButton != null) mainMenuButton.onClick.AddListener(SceneLoader.LoadMainMenu);
         }
     }

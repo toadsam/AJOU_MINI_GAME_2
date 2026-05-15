@@ -7,4 +7,17 @@ namespace AjouFestival.Core
         BalanceWalk,
         Soccer
     }
+
+    public enum SoccerMatchMode
+    {
+        OneVsOne,
+        VersusAI
+    }
+
+    public enum SoccerAIDifficulty
+    {
+        Easy,
+        Medium,
+        Hard
+    }
 }

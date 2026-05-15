@@ -38,9 +38,15 @@ namespace AjouFestival.Core
             LoadScene(BalanceWalkScene);
         }
 
-        public static void LoadSoccer()
+        public static void LoadSoccer(bool preserveSelection = false)
         {
-            GameSessionManager.Ensure().StartGame(GameType.Soccer, SoccerScene);
+            GameSessionManager session = GameSessionManager.Ensure();
+            if (!preserveSelection)
+            {
+                session.ClearSoccerMatchSelection();
+            }
+
+            session.StartGame(GameType.Soccer, SoccerScene);
             LoadScene(SoccerScene);
         }
 
@@ -58,7 +64,7 @@ namespace AjouFestival.Core
                     LoadBalanceWalk();
                     break;
                 case GameType.Soccer:
-                    LoadSoccer();
+                    LoadSoccer(true);
                     break;
                 default:
                     LoadGameSelect();
