@@ -2307,10 +2307,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a574775ed9e7e54796f7b9c314abd82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AjouFestival.UI.GameSelectUI
-  ajouBoontuButton: {fileID: 0}
-  balanceWalkButton: {fileID: 0}
-  soccerButton: {fileID: 0}
-  mainMenuButton: {fileID: 0}
+  cardRoot: {fileID: 738756471758353723}
+  mainMenuButton: {fileID: 8747626499646629820}
+  gameCards:
+  - {fileID: 7441054631647723640}
+  - {fileID: 8807262164943727526}
+  - {fileID: 29849322524207870}
+  - {fileID: 48169256619849720}
+  - {fileID: 6270712354850053589}
+  fallbackCardNames:
+  - AjouBoontuCard
+  - BalanceWalkCard
+  - SoccerCard
+  - ComingSoonCard1
+  - ComingSoonCard2
+  cardHorizontalSpacing: 360
+  cardVerticalOffset: 28
+  selectedScale: 1
+  nearbyScale: 0.86
+  farScale: 0.72
+  selectedAlpha: 1
+  nearbyAlpha: 0.62
+  farAlpha: 0.25
+  sideTilt: 5
+  transitionDuration: 0.28
+  transitionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
 --- !u!1 &6468330027321253990
 GameObject:
   m_ObjectHideFlags: 0
