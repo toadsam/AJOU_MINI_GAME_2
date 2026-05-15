@@ -187,6 +187,98 @@ PrefabInstance:
       propertyPath: m_Name
       value: Canvas_MainMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 919502958025049265, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577951570974738320, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577951570974738320, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1577951570974738320, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 2983239318739715774, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3825195189364530794, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: normalColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3825195189364530794, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: normalColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3825195189364530794, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: normalColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3969198658992617861, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434646633550119736, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 646286762962078520, guid: 2380e0f755f9e254ab8e704f556f9f1c, type: 3}
+    - target: {fileID: 4434646633550119736, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434646633550119736, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434646633550119736, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434646633550119736, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5076281293280454428, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5135059542356302886, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: normalColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5135059542356302886, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: normalColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5135059542356302886, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: normalColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6888301100729808261, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 6888301100729808261, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 6888301100729808261, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6888301100729808261, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -83
+      objectReference: {fileID: 0}
+    - target: {fileID: 7709299597014160062, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8054864592089034725, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -266,6 +358,26 @@ PrefabInstance:
     - target: {fileID: 8054864592089034725, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405268682655417049, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -5018969581255403103, guid: 66984784453428d438e13c20005a63f9, type: 3}
+    - target: {fileID: 8405268682655417049, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405268682655417049, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405268682655417049, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405268682655417049, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -602,7 +714,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -20
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -4476775209642505692, guid: 329da1f46c5af9243911203007498138, type: 3}
+  m_Sprite: {fileID: -7052913442509953211, guid: 64b39e25aa7e44243b247a84e27ff8e1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -621,8 +733,8 @@ Transform:
   m_GameObject: {fileID: 1659993558}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 480, y: 270, z: 2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 483.2, y: 267.3, z: 2}
+  m_LocalScale: {x: 115, y: 115, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
