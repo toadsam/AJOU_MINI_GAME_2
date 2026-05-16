@@ -10,28 +10,74 @@ namespace AjouFestival.Games.Soccer
         [SerializeField] private Text timeText;
         [SerializeField] private Text scoreText;
         [SerializeField] private Text hintText;
+        [SerializeField] private Text countdownText;
         [SerializeField] private Button exitButton;
+
+        [Header("Text")]
+        [SerializeField] private string emptyModeHint = "모드를 선택하세요. 1대1 또는 AI 초급 / 중급 / 상급";
+        [SerializeField] private string oneVsOneHint = "1대1  P1 A/D 이동, W 점프, Space 또는 S 킥   P2 좌/우 이동, 위 점프, Enter/Ctrl/아래 킥   R 다시하기   ESC 메뉴";
+        [SerializeField] private string versusAIHintFormat = "VS AI {0}  P1 A/D 이동, W 점프, Space 또는 S 킥   R 다시하기   ESC 메뉴";
+        [SerializeField] private string timeFormat = "시간 {0}";
+        [SerializeField] private string scoreFormat = "P1 {0} : {1} P2";
+
+        [Header("Countdown")]
+        [SerializeField] private float countdownScale = 1.35f;
+        [SerializeField] private float startScale = 1.15f;
+        [SerializeField] private float startHideDelay = 0.45f;
 
         private Action<SoccerMatchMode, SoccerAIDifficulty> modeSelectionCallback;
         private GameObject modeSelectionPanel;
+        private float hideCountdownAt;
 
         private void Awake()
         {
             if (timeText == null) timeText = transform.Find("TimeText")?.GetComponent<Text>();
             if (scoreText == null) scoreText = transform.Find("ScoreText")?.GetComponent<Text>();
             if (hintText == null) hintText = transform.Find("HintText")?.GetComponent<Text>();
+            if (countdownText == null) countdownText = transform.Find("CountdownText")?.GetComponent<Text>();
             if (exitButton == null) exitButton = transform.Find("ExitButton")?.GetComponent<Button>();
         }
 
         private void Start()
         {
             if (exitButton != null) exitButton.onClick.AddListener(SceneLoader.LoadGameSelect);
+            HideCountdown();
+        }
+
+        private void Update()
+        {
+            if (hideCountdownAt > 0f && Time.time >= hideCountdownAt)
+            {
+                HideCountdown();
+                hideCountdownAt = 0f;
+            }
         }
 
         public void SetMatch(float timeRemaining, int p1Score, int p2Score)
         {
-            if (timeText != null) timeText.text = $"Time {Mathf.CeilToInt(timeRemaining)}";
-            if (scoreText != null) scoreText.text = $"P1 {p1Score} : {p2Score} P2";
+            if (timeText != null) timeText.text = string.Format(timeFormat, Mathf.CeilToInt(timeRemaining));
+            if (scoreText != null) scoreText.text = string.Format(scoreFormat, p1Score, p2Score);
+        }
+
+        public void SetCountdown(string message, bool isStartMessage = false)
+        {
+            if (countdownText == null)
+            {
+                return;
+            }
+
+            countdownText.gameObject.SetActive(true);
+            countdownText.text = message;
+            countdownText.transform.localScale = Vector3.one * (isStartMessage ? startScale : countdownScale);
+            hideCountdownAt = isStartMessage ? Time.time + startHideDelay : 0f;
+        }
+
+        public void HideCountdown()
+        {
+            if (countdownText != null)
+            {
+                countdownText.gameObject.SetActive(false);
+            }
         }
 
         public void ShowModeSelection(Action<SoccerMatchMode, SoccerAIDifficulty> onModeSelected)
@@ -63,18 +109,18 @@ namespace AjouFestival.Games.Soccer
 
             if (mode == null)
             {
-                hintText.text = "Choose a mode to start. 1 vs 1 or AI Easy / Medium / Hard";
+                hintText.text = emptyModeHint;
                 return;
             }
 
             if (mode == SoccerMatchMode.OneVsOne)
             {
-                hintText.text = "1 vs 1  P1 A/D move, W jump, Space or S kick   P2 Left/Right move, Up jump, Enter, Ctrl or Down kick   R restart   ESC menu";
+                hintText.text = oneVsOneHint;
                 return;
             }
 
             string difficultyLabel = GetDifficultyLabel(difficulty ?? SoccerAIDifficulty.Medium);
-            hintText.text = $"VS AI {difficultyLabel}  P1 A/D move, W jump, Space or S kick   R restart   ESC menu";
+            hintText.text = string.Format(versusAIHintFormat, difficultyLabel);
         }
 
         private void EnsureModeSelectionPanel()
@@ -179,10 +225,10 @@ namespace AjouFestival.Games.Soccer
         {
             return difficulty switch
             {
-                SoccerAIDifficulty.Easy => "Easy",
-                SoccerAIDifficulty.Medium => "Medium",
-                SoccerAIDifficulty.Hard => "Hard",
-                _ => "Medium"
+                SoccerAIDifficulty.Easy => "초급",
+                SoccerAIDifficulty.Medium => "중급",
+                SoccerAIDifficulty.Hard => "상급",
+                _ => "중급"
             };
         }
     }
