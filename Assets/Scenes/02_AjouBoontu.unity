@@ -191,7 +191,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: fb8c9d3f5ea04e94fa4eceb2536762c4, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 1
@@ -1009,7 +1009,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: fb8c9d3f5ea04e94fa4eceb2536762c4, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 1
@@ -2843,18 +2843,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: fb8c9d3f5ea04e94fa4eceb2536762c4, type: 3}
     m_FontSize: 30
-    m_FontStyle: 1
+    m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 3
+    m_MinSize: 10
     m_MaxSize: 48
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
-    m_LineSpacing: 1
+    m_LineSpacing: 1.35
   m_Text: "\uCE58\uD1A0\uAC00 A+\uB97C \uBC1B\uAE30 \uC704\uD574 \uB2EC\uB9BD\uB2C8\uB2E4.\r\n\uC7A5\uC560\uBB3C\uC744
     \uD53C\uD558\uACE0, \uC810\uD504\uB85C \uC55E\uC744 \uB3CC\uD30C\uD558\uC138\uC694.\r\nF\uB97C
     \uB9DE\uAC70\uB098 \uB5A8\uC5B4\uC9C0\uBA74 \uBC14\uB85C \uD0C8\uB77D\uC785\uB2C8\uB2E4.\r\n\uC544\uC774\uD15C\uC744
@@ -2927,7 +2927,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: fb8c9d3f5ea04e94fa4eceb2536762c4, type: 3}
     m_FontSize: 56
     m_FontStyle: 1
     m_BestFit: 1
