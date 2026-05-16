@@ -30,6 +30,16 @@ namespace AjouFestival.Games.AjouBoontu
         [SerializeField] private Button startConfirmButton;
         [SerializeField] private bool useRuntimeGuideFallback = false;
         [SerializeField] private string startGuidePanelName = "StartGuidePanel";
+        [Header("Clear Trophy (Scene Editable)")]
+        [SerializeField] private GameObject clearTrophyObject;
+        [SerializeField] private SpriteRenderer clearTrophySpriteRenderer;
+        [SerializeField] private Graphic clearTrophyGraphic;
+        [SerializeField] private Camera clearTrophyCamera;
+        [SerializeField] private string clearTrophyObjectName = "\uC6B0\uC2B9\uD2B8\uB85C\uD53C_0";
+        [SerializeField] private Vector2 clearTrophyCameraOffset = new Vector2(0f, 0.4f);
+        [SerializeField, Min(0.01f)] private float clearTrophyFadeInSeconds = 0.45f;
+        [SerializeField, Min(0f)] private float clearTrophyVisibleSeconds = 2.5f;
+        [SerializeField, Min(0.01f)] private float clearTrophyFadeOutSeconds = 0.35f;
 
         private static readonly string[] StartGuideTextNames = { "GuideText", "StartGuideText", "Guide" };
         private static readonly string[] StartCountdownTextNames = { "CountdownText", "CountText", "TimerText" };
@@ -45,6 +55,9 @@ namespace AjouFestival.Games.AjouBoontu
         private float nextSpeedIncreaseTime;
         private float runStartX;
         private readonly List<Behaviour> hiddenStartGuideBehaviours = new();
+        private Coroutine clearSequenceCoroutine;
+        private bool clearTrophyInitiallyActive;
+        private Vector3 clearTrophyOriginalPosition;
 
         private void Awake()
         {
@@ -80,6 +93,14 @@ namespace AjouFestival.Games.AjouBoontu
             {
                 startGuideText.text = startGuideMessage;
             }
+
+            ResolveClearTrophyReferences();
+            clearTrophyInitiallyActive = clearTrophyObject != null && clearTrophyObject.activeSelf;
+            if (clearTrophyObject != null)
+            {
+                clearTrophyOriginalPosition = clearTrophyObject.transform.position;
+            }
+            SetClearTrophyAlpha(0f);
         }
 
         private void Start()
@@ -202,7 +223,12 @@ namespace AjouFestival.Games.AjouBoontu
 
             IsGameOver = true;
             GameSessionManager.Ensure().SetResult(Score, "Reached the finish line.", $"Score {Score:N0}");
-            SceneLoader.LoadResult();
+            if (clearSequenceCoroutine != null)
+            {
+                StopCoroutine(clearSequenceCoroutine);
+            }
+
+            clearSequenceCoroutine = StartCoroutine(ClearSequenceRoutine());
         }
 
         private void UpdateRunSpeed()
@@ -342,6 +368,179 @@ namespace AjouFestival.Games.AjouBoontu
             }
 
             hiddenStartGuideBehaviours.Clear();
+        }
+
+        private IEnumerator ClearSequenceRoutine()
+        {
+            IsGameRunning = false;
+            SetGameRuntimeEnabled(false);
+
+            if (runner != null)
+            {
+                runner.SetRunning(false);
+            }
+
+            bool hasTrophy = ResolveClearTrophyReferences();
+            if (!hasTrophy)
+            {
+                SceneLoader.LoadResult();
+                yield break;
+            }
+
+            if (clearTrophyObject != null)
+            {
+                PositionClearTrophyAtCamera();
+                clearTrophyObject.SetActive(true);
+            }
+
+            SetClearTrophyAlpha(0f);
+
+            float fadeInDuration = Mathf.Max(0.01f, clearTrophyFadeInSeconds);
+            float elapsed = 0f;
+            while (elapsed < fadeInDuration)
+            {
+                elapsed += Time.deltaTime;
+                SetClearTrophyAlpha(Mathf.Clamp01(elapsed / fadeInDuration));
+                yield return null;
+            }
+
+            SetClearTrophyAlpha(1f);
+
+            if (clearTrophyVisibleSeconds > 0f)
+            {
+                yield return new WaitForSeconds(clearTrophyVisibleSeconds);
+            }
+
+            float fadeOutDuration = Mathf.Max(0.01f, clearTrophyFadeOutSeconds);
+            elapsed = 0f;
+            while (elapsed < fadeOutDuration)
+            {
+                elapsed += Time.deltaTime;
+                SetClearTrophyAlpha(1f - Mathf.Clamp01(elapsed / fadeOutDuration));
+                yield return null;
+            }
+
+            SetClearTrophyAlpha(0f);
+            if (clearTrophyObject != null && !clearTrophyInitiallyActive)
+            {
+                clearTrophyObject.SetActive(false);
+            }
+            RestoreClearTrophyTransform();
+            SceneLoader.LoadResult();
+        }
+
+        private bool ResolveClearTrophyReferences()
+        {
+            if (clearTrophyObject == null && !string.IsNullOrWhiteSpace(clearTrophyObjectName))
+            {
+                clearTrophyObject = FindSceneObjectIncludingInactive(clearTrophyObjectName);
+            }
+
+            if (clearTrophyObject != null)
+            {
+                if (clearTrophySpriteRenderer == null)
+                {
+                    clearTrophySpriteRenderer = clearTrophyObject.GetComponent<SpriteRenderer>();
+                    if (clearTrophySpriteRenderer == null)
+                    {
+                        clearTrophySpriteRenderer = clearTrophyObject.GetComponentInChildren<SpriteRenderer>(true);
+                    }
+                }
+
+                if (clearTrophyGraphic == null)
+                {
+                    clearTrophyGraphic = clearTrophyObject.GetComponent<Graphic>();
+                    if (clearTrophyGraphic == null)
+                    {
+                        clearTrophyGraphic = clearTrophyObject.GetComponentInChildren<Graphic>(true);
+                    }
+                }
+            }
+
+            return clearTrophySpriteRenderer != null || clearTrophyGraphic != null;
+        }
+
+        private void PositionClearTrophyAtCamera()
+        {
+            if (clearTrophyObject == null || clearTrophyGraphic != null)
+            {
+                return;
+            }
+
+            Camera targetCamera = clearTrophyCamera != null ? clearTrophyCamera : Camera.main;
+            if (targetCamera == null)
+            {
+                return;
+            }
+
+            clearTrophyOriginalPosition = clearTrophyObject.transform.position;
+
+            Vector3 cameraPosition = targetCamera.transform.position;
+            Vector3 trophyPosition = clearTrophyObject.transform.position;
+            trophyPosition.x = cameraPosition.x + clearTrophyCameraOffset.x;
+            trophyPosition.y = cameraPosition.y + clearTrophyCameraOffset.y;
+            clearTrophyObject.transform.position = trophyPosition;
+        }
+
+        private void RestoreClearTrophyTransform()
+        {
+            if (clearTrophyObject == null || clearTrophyGraphic != null)
+            {
+                return;
+            }
+
+            clearTrophyObject.transform.position = clearTrophyOriginalPosition;
+        }
+
+        private static GameObject FindSceneObjectIncludingInactive(string objectName)
+        {
+            if (string.IsNullOrWhiteSpace(objectName))
+            {
+                return null;
+            }
+
+            GameObject[] allObjects = Resources.FindObjectsOfTypeAll<GameObject>();
+            for (int i = 0; i < allObjects.Length; i++)
+            {
+                GameObject candidate = allObjects[i];
+                if (candidate == null)
+                {
+                    continue;
+                }
+
+                if (candidate.name != objectName)
+                {
+                    continue;
+                }
+
+                if (!candidate.scene.IsValid() || !candidate.scene.isLoaded)
+                {
+                    continue;
+                }
+
+                return candidate;
+            }
+
+            return null;
+        }
+
+        private void SetClearTrophyAlpha(float alpha)
+        {
+            alpha = Mathf.Clamp01(alpha);
+
+            if (clearTrophySpriteRenderer != null)
+            {
+                Color color = clearTrophySpriteRenderer.color;
+                color.a = alpha;
+                clearTrophySpriteRenderer.color = color;
+            }
+
+            if (clearTrophyGraphic != null)
+            {
+                Color color = clearTrophyGraphic.color;
+                color.a = alpha;
+                clearTrophyGraphic.color = color;
+            }
         }
 
         private void SetGameRuntimeEnabled(bool enabled)
