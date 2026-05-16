@@ -12,6 +12,11 @@ namespace AjouFestival.Games.Soccer
         [SerializeField] private Text hintText;
         [SerializeField] private Text countdownText;
         [SerializeField] private Button exitButton;
+        [SerializeField] private GameObject modeSelectionPanel;
+
+        [Header("Panels")]
+        [SerializeField] private bool useRuntimeModeSelectionFallback = true;
+        [SerializeField] private string modeSelectionPanelName = "ModeSelectionPanel";
 
         [Header("Text")]
         [SerializeField] private string emptyModeHint = "모드를 선택하세요. 1대1 또는 AI 초급 / 중급 / 상급";
@@ -26,8 +31,13 @@ namespace AjouFestival.Games.Soccer
         [SerializeField] private float startHideDelay = 0.45f;
 
         private Action<SoccerMatchMode, SoccerAIDifficulty> modeSelectionCallback;
-        private GameObject modeSelectionPanel;
         private float hideCountdownAt;
+        private bool modeButtonsBound;
+
+        private static readonly string[] OneVsOneButtonNames = { "OneVsOneButton", "OneVsOne", "1v1Button", "1 vs 1" };
+        private static readonly string[] EasyButtonNames = { "AIEasyButton", "EasyButton", "AI Easy" };
+        private static readonly string[] MediumButtonNames = { "AIMediumButton", "MediumButton", "AI Medium" };
+        private static readonly string[] HardButtonNames = { "AIHardButton", "HardButton", "AI Hard" };
 
         private void Awake()
         {
@@ -36,6 +46,9 @@ namespace AjouFestival.Games.Soccer
             if (hintText == null) hintText = transform.Find("HintText")?.GetComponent<Text>();
             if (countdownText == null) countdownText = transform.Find("CountdownText")?.GetComponent<Text>();
             if (exitButton == null) exitButton = transform.Find("ExitButton")?.GetComponent<Button>();
+
+            ResolveModeSelectionPanel();
+            BindModeSelectionButtons();
         }
 
         private void Start()
@@ -125,6 +138,9 @@ namespace AjouFestival.Games.Soccer
 
         private void EnsureModeSelectionPanel()
         {
+            ResolveModeSelectionPanel();
+            BindModeSelectionButtons();
+
             if (modeSelectionPanel != null)
             {
                 return;
@@ -151,17 +167,75 @@ namespace AjouFestival.Games.Soccer
             cardImage.color = new Color(0.92f, 0.97f, 1f, 0.96f);
 
             Text titleText = CreateText("ModeTitle", cardRect, new Vector2(0f, 125f), new Vector2(340f, 40f), 28, Color.black);
-            titleText.text = "Choose Match Mode";
+            titleText.text = "대전 모드 선택";
 
             Text subtitleText = CreateText("ModeSubtitle", cardRect, new Vector2(0f, 86f), new Vector2(340f, 32f), 18, new Color(0.08f, 0.24f, 0.44f));
-            subtitleText.text = "Pick how Player 2 is controlled";
+            subtitleText.text = "Player 2 조작 방식을 고르세요";
 
-            CreateModeButton(cardRect, "1 vs 1", new Vector2(0f, 20f), () => SelectMode(SoccerMatchMode.OneVsOne, SoccerAIDifficulty.Medium), new Color(0.14f, 0.4f, 0.71f));
-            CreateModeButton(cardRect, "AI Easy", new Vector2(0f, -38f), () => SelectMode(SoccerMatchMode.VersusAI, SoccerAIDifficulty.Easy), new Color(0.18f, 0.58f, 0.38f));
-            CreateModeButton(cardRect, "AI Medium", new Vector2(0f, -96f), () => SelectMode(SoccerMatchMode.VersusAI, SoccerAIDifficulty.Medium), new Color(0.84f, 0.56f, 0.14f));
-            CreateModeButton(cardRect, "AI Hard", new Vector2(0f, -154f), () => SelectMode(SoccerMatchMode.VersusAI, SoccerAIDifficulty.Hard), new Color(0.78f, 0.22f, 0.22f));
+            CreateModeButton(cardRect, "OneVsOneButton", "1대1", new Vector2(0f, 20f), new Color(0.14f, 0.4f, 0.71f));
+            CreateModeButton(cardRect, "AIEasyButton", "AI 초급", new Vector2(0f, -38f), new Color(0.18f, 0.58f, 0.38f));
+            CreateModeButton(cardRect, "AIMediumButton", "AI 중급", new Vector2(0f, -96f), new Color(0.84f, 0.56f, 0.14f));
+            CreateModeButton(cardRect, "AIHardButton", "AI 상급", new Vector2(0f, -154f), new Color(0.78f, 0.22f, 0.22f));
 
             modeSelectionPanel.SetActive(false);
+            modeButtonsBound = false;
+            BindModeSelectionButtons();
+        }
+
+        private void ResolveModeSelectionPanel()
+        {
+            if (modeSelectionPanel != null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(modeSelectionPanelName))
+            {
+                Transform child = transform.Find(modeSelectionPanelName);
+                if (child != null)
+                {
+                    modeSelectionPanel = child.gameObject;
+                    return;
+                }
+
+                GameObject sceneObject = GameObject.Find(modeSelectionPanelName);
+                if (sceneObject != null)
+                {
+                    modeSelectionPanel = sceneObject;
+                    return;
+                }
+            }
+
+            if (useRuntimeModeSelectionFallback)
+            {
+                modeButtonsBound = false;
+            }
+        }
+
+        private void BindModeSelectionButtons()
+        {
+            if (modeButtonsBound || modeSelectionPanel == null)
+            {
+                return;
+            }
+
+            BindModeButton(FindButtonInPanel(modeSelectionPanel, OneVsOneButtonNames), SoccerMatchMode.OneVsOne, SoccerAIDifficulty.Medium);
+            BindModeButton(FindButtonInPanel(modeSelectionPanel, EasyButtonNames), SoccerMatchMode.VersusAI, SoccerAIDifficulty.Easy);
+            BindModeButton(FindButtonInPanel(modeSelectionPanel, MediumButtonNames), SoccerMatchMode.VersusAI, SoccerAIDifficulty.Medium);
+            BindModeButton(FindButtonInPanel(modeSelectionPanel, HardButtonNames), SoccerMatchMode.VersusAI, SoccerAIDifficulty.Hard);
+
+            modeButtonsBound = true;
+        }
+
+        private void BindModeButton(Button button, SoccerMatchMode mode, SoccerAIDifficulty difficulty)
+        {
+            if (button == null)
+            {
+                return;
+            }
+
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => SelectMode(mode, difficulty));
         }
 
         private void SelectMode(SoccerMatchMode mode, SoccerAIDifficulty difficulty)
@@ -169,9 +243,9 @@ namespace AjouFestival.Games.Soccer
             modeSelectionCallback?.Invoke(mode, difficulty);
         }
 
-        private void CreateModeButton(RectTransform parent, string label, Vector2 anchoredPosition, Action onClick, Color buttonColor)
+        private void CreateModeButton(RectTransform parent, string objectName, string label, Vector2 anchoredPosition, Color buttonColor)
         {
-            RectTransform buttonRect = CreateRectObject(label, parent);
+            RectTransform buttonRect = CreateRectObject(objectName, parent);
             buttonRect.anchorMin = new Vector2(0.5f, 0.5f);
             buttonRect.anchorMax = new Vector2(0.5f, 0.5f);
             buttonRect.pivot = new Vector2(0.5f, 0.5f);
@@ -189,7 +263,6 @@ namespace AjouFestival.Games.Soccer
             colors.selectedColor = buttonColor;
             colors.disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.7f);
             button.colors = colors;
-            button.onClick.AddListener(() => onClick());
 
             Text buttonText = CreateText("Label", buttonRect, Vector2.zero, new Vector2(220f, 32f), 20, Color.white);
             buttonText.text = label;
@@ -219,6 +292,28 @@ namespace AjouFestival.Games.Soccer
             text.raycastTarget = false;
 
             return text;
+        }
+
+        private static Button FindButtonInPanel(GameObject root, string[] preferredNames)
+        {
+            Button[] buttons = root.GetComponentsInChildren<Button>(true);
+            if (buttons == null || buttons.Length == 0)
+            {
+                return null;
+            }
+
+            for (int nameIndex = 0; nameIndex < preferredNames.Length; nameIndex++)
+            {
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    if (buttons[i] != null && string.Equals(buttons[i].name, preferredNames[nameIndex], StringComparison.OrdinalIgnoreCase))
+                    {
+                        return buttons[i];
+                    }
+                }
+            }
+
+            return null;
         }
 
         private static string GetDifficultyLabel(SoccerAIDifficulty difficulty)
