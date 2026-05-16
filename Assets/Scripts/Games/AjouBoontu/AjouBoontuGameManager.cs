@@ -1,5 +1,6 @@
 ﻿using AjouFestival.Core;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,6 +44,7 @@ namespace AjouFestival.Games.AjouBoontu
         private float elapsedTime;
         private float nextSpeedIncreaseTime;
         private float runStartX;
+        private readonly List<Behaviour> hiddenStartGuideBehaviours = new();
 
         private void Awake()
         {
@@ -132,6 +134,7 @@ namespace AjouFestival.Games.AjouBoontu
                 startConfirmButton.interactable = false;
             }
 
+            HideGuidePanelForCountdown();
             StartCoroutine(StartCountdownRoutine());
         }
 
@@ -260,6 +263,7 @@ namespace AjouFestival.Games.AjouBoontu
         private void StartGame()
         {
             IsGameRunning = true;
+            RestoreGuidePanelAfterCountdown();
             if (startGuidePanel != null)
             {
                 startGuidePanel.SetActive(false);
@@ -292,6 +296,52 @@ namespace AjouFestival.Games.AjouBoontu
             {
                 startCountdownText.text = string.Empty;
             }
+        }
+
+        private void HideGuidePanelForCountdown()
+        {
+            if (startGuidePanel == null)
+            {
+                return;
+            }
+
+            hiddenStartGuideBehaviours.Clear();
+            Behaviour[] behaviours = startGuidePanel.GetComponentsInChildren<Behaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                Behaviour behaviour = behaviours[i];
+                if (behaviour == null || !behaviour.enabled)
+                {
+                    continue;
+                }
+
+                if (startCountdownText != null && (behaviour == startCountdownText || behaviour.transform == startCountdownText.transform))
+                {
+                    continue;
+                }
+
+                hiddenStartGuideBehaviours.Add(behaviour);
+                behaviour.enabled = false;
+            }
+
+            if (startCountdownText != null)
+            {
+                startCountdownText.enabled = true;
+                startCountdownText.gameObject.SetActive(true);
+            }
+        }
+
+        private void RestoreGuidePanelAfterCountdown()
+        {
+            for (int i = 0; i < hiddenStartGuideBehaviours.Count; i++)
+            {
+                if (hiddenStartGuideBehaviours[i] != null)
+                {
+                    hiddenStartGuideBehaviours[i].enabled = true;
+                }
+            }
+
+            hiddenStartGuideBehaviours.Clear();
         }
 
         private void SetGameRuntimeEnabled(bool enabled)
