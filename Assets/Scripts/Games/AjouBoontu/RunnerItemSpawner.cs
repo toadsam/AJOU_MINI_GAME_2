@@ -5,6 +5,7 @@ namespace AjouFestival.Games.AjouBoontu
 {
     public sealed class RunnerItemSpawner : MonoBehaviour
     {
+        [SerializeField] private bool autoSpawn = true;
         [SerializeField] private ChitoRunnerController runner;
         [SerializeField] private List<GameObject> itemPrefabs = new();
         [SerializeField] private float spawnAheadDistance = 20f;
@@ -21,7 +22,7 @@ namespace AjouFestival.Games.AjouBoontu
 
         private void Update()
         {
-            if (runner == null || itemPrefabs.Count == 0)
+            if (!autoSpawn || runner == null || itemPrefabs.Count == 0)
             {
                 return;
             }
