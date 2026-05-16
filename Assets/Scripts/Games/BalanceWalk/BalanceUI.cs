@@ -6,11 +6,22 @@ namespace AjouFestival.Games.BalanceWalk
 {
     public sealed class BalanceUI : MonoBehaviour
     {
+        [Header("References")]
         [SerializeField] private Text timeText;
         [SerializeField] private Text bestText;
         [SerializeField] private Text hintText;
         [SerializeField] private Text countdownText;
         [SerializeField] private Button exitButton;
+
+        [Header("Text")]
+        [SerializeField] private string hintMessage = "A/D \uB610\uB294 \uBC29\uD5A5\uD0A4: \uADE0\uD615 \uC7A1\uAE30   R: \uB2E4\uC2DC\uD558\uAE30   ESC: \uC120\uD0DD";
+        [SerializeField] private string survivalTimeFormat = "\uBC84\uD2F4 \uC2DC\uAC04 {0:0.0}\uCD08";
+        [SerializeField] private string bestTimeFormat = "\uCD5C\uACE0 \uC2DC\uAC04 {0:0.0}\uCD08";
+
+        [Header("Countdown")]
+        [SerializeField] private float countdownScale = 1.35f;
+        [SerializeField] private float startScale = 1.15f;
+        [SerializeField] private float startHideDelay = 0.45f;
 
         private float hideCountdownAt;
 
@@ -25,7 +36,7 @@ namespace AjouFestival.Games.BalanceWalk
 
         private void Start()
         {
-            if (hintText != null) hintText.text = "A/D 또는 ←/→로 균형 잡기   R: 다시하기   ESC: 선택";
+            if (hintText != null) hintText.text = hintMessage;
             if (exitButton != null) exitButton.onClick.AddListener(SceneLoader.LoadGameSelect);
         }
 
@@ -38,18 +49,18 @@ namespace AjouFestival.Games.BalanceWalk
             }
         }
 
-        public void SetDistance(float meters)
+        public void SetSurvivalTime(float seconds)
         {
-            if (timeText != null) timeText.text = $"이동 거리 {meters:0.0} m";
+            if (timeText != null) timeText.text = string.Format(survivalTimeFormat, seconds);
         }
 
-        public void SetBestDistance(int bestScore, float scorePerMeter)
+        public void SetBestTime(int bestScore, float scorePerSecond)
         {
-            float bestMeters = scorePerMeter > 0f ? bestScore / scorePerMeter : bestScore;
-            if (bestText != null) bestText.text = $"최고 거리 {bestMeters:0.0} m";
+            float bestSeconds = scorePerSecond > 0f ? bestScore / scorePerSecond : bestScore;
+            if (bestText != null) bestText.text = string.Format(bestTimeFormat, bestSeconds);
         }
 
-        public void SetCountdown(string message)
+        public void SetCountdown(string message, bool isStartMessage = false)
         {
             if (countdownText == null)
             {
@@ -58,8 +69,8 @@ namespace AjouFestival.Games.BalanceWalk
 
             countdownText.gameObject.SetActive(true);
             countdownText.text = message;
-            countdownText.transform.localScale = Vector3.one * (message == "Start!" ? 1.15f : 1.35f);
-            hideCountdownAt = message == "Start!" ? Time.time + 0.45f : 0f;
+            countdownText.transform.localScale = Vector3.one * (isStartMessage ? startScale : countdownScale);
+            hideCountdownAt = isStartMessage ? Time.time + startHideDelay : 0f;
         }
 
         public void HideCountdown()

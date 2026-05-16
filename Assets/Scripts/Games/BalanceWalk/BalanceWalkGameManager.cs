@@ -5,10 +5,20 @@ namespace AjouFestival.Games.BalanceWalk
 {
     public sealed class BalanceWalkGameManager : MonoBehaviour
     {
+        [Header("References")]
         [SerializeField] private BalancePlayerController player;
         [SerializeField] private BalanceUI ui;
+
+        [Header("Flow")]
         [SerializeField] private float countdownDuration = 3f;
-        [SerializeField] private float scorePerMeter = 10f;
+
+        [Header("Scoring")]
+        [SerializeField] private float scorePerSecond = 10f;
+
+        [Header("Text")]
+        [SerializeField] private string countdownStartMessage = "\uC2DC\uC791!";
+        [SerializeField] private string resultMessageFormat = "\uADE0\uD615\uC744 \uC783\uC5C8\uC2B5\uB2C8\uB2E4. \uCD5C\uC885 \uAC01\uB3C4 {0:0}\uB3C4";
+        [SerializeField] private string resultScoreTextFormat = "{0:0.0}\uCD08 \uBC84\uD300";
 
         public bool IsGameOver { get; private set; }
         public bool HasStarted { get; private set; }
@@ -35,8 +45,8 @@ namespace AjouFestival.Games.BalanceWalk
             if (player != null) player.Initialize(this);
             if (ui != null)
             {
-                ui.SetBestDistance(ScoreRecordManager.GetBestScore(GameType.BalanceWalk), scorePerMeter);
-                ui.SetDistance(0f);
+                ui.SetBestTime(ScoreRecordManager.GetBestScore(GameType.BalanceWalk), scorePerSecond);
+                ui.SetSurvivalTime(0f);
                 ui.SetCountdown(Mathf.CeilToInt(CountdownRemaining).ToString());
             }
         }
@@ -58,7 +68,7 @@ namespace AjouFestival.Games.BalanceWalk
                 }
 
                 HasStarted = true;
-                ui?.SetCountdown("Start!");
+                ui?.SetCountdown(countdownStartMessage, true);
                 return;
             }
 
@@ -66,7 +76,7 @@ namespace AjouFestival.Games.BalanceWalk
             ElapsedTime += Time.deltaTime;
             DistanceMeters = player != null ? Mathf.Max(0f, player.transform.position.x - startX) : 0f;
             Difficulty = 1f + DistanceMeters * 0.015f;
-            ui?.SetDistance(DistanceMeters);
+            ui?.SetSurvivalTime(ElapsedTime);
         }
 
         public void GameOver(float angle)
@@ -77,8 +87,10 @@ namespace AjouFestival.Games.BalanceWalk
             }
 
             IsGameOver = true;
-            int score = Mathf.FloorToInt(DistanceMeters * scorePerMeter);
-            GameSessionManager.Ensure().SetResult(score, $"균형을 잃었습니다. 최종 각도 {angle:0}도", $"{DistanceMeters:0.0} m");
+            int score = Mathf.FloorToInt(ElapsedTime * scorePerSecond);
+            string resultMessage = string.Format(resultMessageFormat, angle);
+            string resultScoreText = string.Format(resultScoreTextFormat, ElapsedTime);
+            GameSessionManager.Ensure().SetResult(score, resultMessage, resultScoreText);
             SceneLoader.LoadResult();
         }
     }
