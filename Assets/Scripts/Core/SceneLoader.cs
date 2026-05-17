@@ -11,6 +11,7 @@ namespace AjouFestival.Core
         public const string BalanceWalkScene = "03_BalanceWalk";
         public const string SoccerScene = "04_OneVsOneSoccer";
         public const string ResultScene = "05_Result";
+        public const string RecordBoardScene = "06_RecordBoard";
 
         public static void LoadScene(string sceneName)
         {
@@ -51,6 +52,7 @@ namespace AjouFestival.Core
         }
 
         public static void LoadResult() => LoadScene(ResultScene);
+        public static void LoadRecordBoard() => LoadScene(RecordBoardScene);
 
         public static void RestartLastGame()
         {
@@ -87,6 +89,7 @@ namespace AjouFestival.Core
         public void LoadBalanceWalkButton() => LoadBalanceWalk();
         public void LoadSoccerButton() => LoadSoccer();
         public void LoadResultButton() => LoadResult();
+        public void LoadRecordBoardButton() => LoadRecordBoard();
         public void RestartLastGameButton() => RestartLastGame();
         public void QuitGameButton() => QuitGame();
     }

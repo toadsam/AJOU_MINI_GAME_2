@@ -23,6 +23,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/05_Result.unity
     guid: d6f258af70eac374d9de8dfcf9727fd5
+  - enabled: 1
+    path: Assets/Scenes/06_RecordBoard.unity
+    guid: 8cbd89d53c0c4aa3a7056527493eaca6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
