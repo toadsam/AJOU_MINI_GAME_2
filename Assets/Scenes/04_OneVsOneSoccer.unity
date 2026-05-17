@@ -802,6 +802,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoccerBall
       objectReference: {fileID: 0}
+    - target: {fileID: 4649921949191853191, guid: 83819eae902c40e4eb875584d439799a, type: 3}
+      propertyPath: m_Mass
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 5647677337996514407, guid: 83819eae902c40e4eb875584d439799a, type: 3}
       propertyPath: m_Radius
       value: 5.66
@@ -1524,7 +1528,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2484645432065939873, guid: 3e6ae70beee24d1438ba8ea8f4004062, type: 3}
       propertyPath: m_Radius
-      value: 3.5
+      value: 5.86
       objectReference: {fileID: 0}
     - target: {fileID: 2484645432065939873, guid: 3e6ae70beee24d1438ba8ea8f4004062, type: 3}
       propertyPath: m_Offset.x
@@ -4142,8 +4146,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AjouFestival.UI.CommonButtonUI
   hoverScale: 1.04
+  tintTargetGraphic: 1
   normalColor: {r: 1, g: 1, b: 1, a: 0.95}
   hoverColor: {r: 0.12, g: 0.72, b: 1, a: 1}
+  clickSfx: {fileID: 0}
+  hoverSfx: {fileID: 0}
+  clickSfxVolume: 1
+  hoverSfxVolume: 0.6
 --- !u!114 &2120365308
 MonoBehaviour:
   m_ObjectHideFlags: 0

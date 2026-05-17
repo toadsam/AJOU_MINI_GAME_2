@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace AjouFestival.UI
 {
+    [ExecuteAlways]
     public sealed class GameSelectUI : MonoBehaviour
     {
         [Header("Card Setup")]
@@ -34,9 +35,28 @@ namespace AjouFestival.UI
         [SerializeField] private float transitionDuration = 0.28f;
         [SerializeField] private AnimationCurve transitionCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
+        [Header("Navigation Buttons")]
+        [SerializeField] private Button leftNavigationButton;
+        [SerializeField] private Button rightNavigationButton;
+        [SerializeField] private bool createNavigationButtons = true;
+        [SerializeField] private string leftNavigationText = "<";
+        [SerializeField] private string rightNavigationText = ">";
+        [SerializeField] private Sprite leftNavigationSprite;
+        [SerializeField] private Sprite rightNavigationSprite;
+        [SerializeField] private Vector2 navigationButtonSize = new Vector2(58f, 76f);
+        [SerializeField] private Vector2 leftNavigationPosition = new Vector2(34f, 0f);
+        [SerializeField] private Vector2 rightNavigationPosition = new Vector2(-34f, 0f);
+        [SerializeField] private Color navigationButtonColor = new Color(1f, 1f, 1f, 0f);
+        [SerializeField] private Color navigationTextColor = Color.white;
+
+        [Header("SFX")]
+        [SerializeField] private AudioClip cardMoveSfx;
+        [SerializeField, Range(0f, 1f)] private float cardMoveSfxVolume = 1f;
+
         private readonly List<CardItem> cardItems = new();
         private int currentIndex;
         private Coroutine transitionRoutine;
+        private Font uiFont;
 
         private sealed class CardItem
         {
@@ -60,12 +80,31 @@ namespace AjouFestival.UI
             }
         }
 
+        private void OnEnable()
+        {
+            if (!Application.isPlaying)
+            {
+                uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                EnsureNavigationButtonsExist();
+            }
+        }
+
+        private void OnValidate()
+        {
+            if (!Application.isPlaying)
+            {
+                ApplyNavigationButtonSettings();
+            }
+        }
+
         private void Start()
         {
             GameSessionManager.Ensure();
+            uiFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
 
             InitializeCards();
             SetupListeners();
+            SetupNavigationButtons();
             SetSelectedIndex(0, true);
 
             if (mainMenuButton != null)
@@ -83,11 +122,11 @@ namespace AjouFestival.UI
 
             if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             {
-                SetSelectedIndex(currentIndex - 1);
+                SelectPreviousCard();
             }
             else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             {
-                SetSelectedIndex(currentIndex + 1);
+                SelectNextCard();
             }
 
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space))
@@ -198,6 +237,117 @@ namespace AjouFestival.UI
             }
         }
 
+        private void SetupNavigationButtons()
+        {
+            EnsureNavigationButtonsExist();
+
+            if (Application.isPlaying)
+            {
+                if (leftNavigationButton != null)
+                {
+                    leftNavigationButton.onClick.RemoveAllListeners();
+                    leftNavigationButton.onClick.AddListener(SelectPreviousCard);
+                }
+
+                if (rightNavigationButton != null)
+                {
+                    rightNavigationButton.onClick.RemoveAllListeners();
+                    rightNavigationButton.onClick.AddListener(SelectNextCard);
+                }
+            }
+        }
+
+        private void EnsureNavigationButtonsExist()
+        {
+            if (leftNavigationButton == null)
+            {
+                leftNavigationButton = transform.Find("LeftNavigationButton")?.GetComponent<Button>();
+            }
+
+            if (rightNavigationButton == null)
+            {
+                rightNavigationButton = transform.Find("RightNavigationButton")?.GetComponent<Button>();
+            }
+
+            if (createNavigationButtons)
+            {
+                if (leftNavigationButton == null)
+                {
+                    leftNavigationButton = CreateNavigationButton("LeftNavigationButton", leftNavigationText, leftNavigationSprite, new Vector2(0f, 0.5f), leftNavigationPosition);
+                }
+
+                if (rightNavigationButton == null)
+                {
+                    rightNavigationButton = CreateNavigationButton("RightNavigationButton", rightNavigationText, rightNavigationSprite, new Vector2(1f, 0.5f), rightNavigationPosition);
+                }
+            }
+
+            ApplyNavigationButtonSettings();
+        }
+
+        private void ApplyNavigationButtonSettings()
+        {
+            ApplyNavigationButtonSettings(leftNavigationButton, leftNavigationText, leftNavigationSprite, new Vector2(0f, 0.5f), leftNavigationPosition);
+            ApplyNavigationButtonSettings(rightNavigationButton, rightNavigationText, rightNavigationSprite, new Vector2(1f, 0.5f), rightNavigationPosition);
+        }
+
+        private void ApplyNavigationButtonSettings(Button button, string label, Sprite sprite, Vector2 anchor, Vector2 anchoredPosition)
+        {
+            if (button == null)
+            {
+                return;
+            }
+
+            RectTransform rect = button.GetComponent<RectTransform>();
+            if (rect != null)
+            {
+                rect.anchorMin = anchor;
+                rect.anchorMax = anchor;
+                rect.pivot = new Vector2(0.5f, 0.5f);
+
+                if (rect.sizeDelta == Vector2.zero)
+                {
+                    rect.sizeDelta = navigationButtonSize;
+                }
+
+                if (rect.anchoredPosition == Vector2.zero)
+                {
+                    rect.anchoredPosition = anchoredPosition;
+                }
+            }
+
+            Image image = button.GetComponent<Image>();
+            if (image != null)
+            {
+                image.sprite = sprite;
+                image.type = Image.Type.Simple;
+                image.color = sprite != null && navigationButtonColor.a <= 0f ? Color.white : navigationButtonColor;
+            }
+
+            CommonButtonUI commonButton = button.GetComponent<CommonButtonUI>();
+            if (commonButton != null)
+            {
+                commonButton.SetTintTargetGraphic(false);
+            }
+
+            Text text = button.transform.Find("Text")?.GetComponent<Text>();
+            if (text != null)
+            {
+                text.text = label;
+                text.color = navigationTextColor;
+            }
+        }
+
+        private void SelectPreviousCard()
+        {
+            SetSelectedIndex(currentIndex - 1);
+        }
+
+        private void SelectNextCard()
+        {
+            SetSelectedIndex(currentIndex + 1);
+        }
+
         private void SetSelectedIndex(int newIndex, bool immediate = false)
         {
             if (cardItems.Count == 0)
@@ -212,6 +362,11 @@ namespace AjouFestival.UI
             }
 
             currentIndex = wrappedIndex;
+            if (!immediate)
+            {
+                PlayCardMoveSfx();
+            }
+
             if (transitionRoutine != null)
             {
                 StopCoroutine(transitionRoutine);
@@ -371,6 +526,79 @@ namespace AjouFestival.UI
             }
 
             return distance;
+        }
+
+        private void PlayCardMoveSfx()
+        {
+            if (cardMoveSfx == null)
+            {
+                return;
+            }
+
+            AudioManager.Ensure().PlaySfx(cardMoveSfx, cardMoveSfxVolume);
+        }
+
+        private Button CreateNavigationButton(string name, string label, Sprite sprite, Vector2 anchor, Vector2 anchoredPosition)
+        {
+            GameObject obj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button), typeof(CommonButtonUI));
+            obj.transform.SetParent(transform, false);
+
+            RectTransform rect = obj.GetComponent<RectTransform>();
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = anchoredPosition;
+            rect.sizeDelta = navigationButtonSize;
+
+            Image image = obj.GetComponent<Image>();
+            if (sprite != null)
+            {
+                image.color = navigationButtonColor.a <= 0f ? Color.white : navigationButtonColor;
+                image.sprite = sprite;
+                image.type = Image.Type.Simple;
+            }
+            else
+            {
+                image.color = navigationButtonColor;
+            }
+
+            Button button = obj.GetComponent<Button>();
+            button.targetGraphic = image;
+
+            CommonButtonUI commonButton = obj.GetComponent<CommonButtonUI>();
+            commonButton.SetTintTargetGraphic(false);
+
+            Text text = CreateNavigationButtonText(obj.transform, label);
+            text.raycastTarget = false;
+            return button;
+        }
+
+        private Text CreateNavigationButtonText(Transform parent, string label)
+        {
+            GameObject obj = new GameObject("Text", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+            obj.transform.SetParent(parent, false);
+
+            Text text = obj.GetComponent<Text>();
+            if (uiFont != null)
+            {
+                text.font = uiFont;
+            }
+
+            text.text = label;
+            text.fontSize = 44;
+            text.fontStyle = FontStyle.Bold;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = navigationTextColor;
+            text.resizeTextForBestFit = true;
+            text.resizeTextMinSize = 16;
+            text.resizeTextMaxSize = 44;
+
+            RectTransform rect = text.rectTransform;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            return text;
         }
     }
 }

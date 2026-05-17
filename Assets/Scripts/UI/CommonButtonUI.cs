@@ -6,9 +6,10 @@ using AjouFestival.Core;
 namespace AjouFestival.UI
 {
     [RequireComponent(typeof(Button))]
-    public sealed class CommonButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public sealed class CommonButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler, ISubmitHandler
     {
         [SerializeField] private float hoverScale = 1.04f;
+        [SerializeField] private bool tintTargetGraphic = true;
         [SerializeField] private Color normalColor = new Color(0.08f, 0.42f, 0.86f, 0.95f);
         [SerializeField] private Color hoverColor = new Color(0.12f, 0.72f, 1f, 1f);
         [Header("SFX")]
@@ -26,12 +27,11 @@ namespace AjouFestival.UI
             button = GetComponent<Button>();
             targetGraphic = button.targetGraphic;
             baseScale = transform.localScale;
-            if (targetGraphic != null)
+            if (tintTargetGraphic && targetGraphic != null)
             {
                 targetGraphic.color = normalColor;
             }
 
-            button.onClick.AddListener(PlayClickSfx);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -42,7 +42,7 @@ namespace AjouFestival.UI
             }
 
             transform.localScale = baseScale * hoverScale;
-            if (targetGraphic != null)
+            if (tintTargetGraphic && targetGraphic != null)
             {
                 targetGraphic.color = hoverColor;
             }
@@ -53,10 +53,30 @@ namespace AjouFestival.UI
         public void OnPointerExit(PointerEventData eventData)
         {
             transform.localScale = baseScale;
-            if (targetGraphic != null)
+            if (tintTargetGraphic && targetGraphic != null)
             {
                 targetGraphic.color = normalColor;
             }
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Left)
+            {
+                return;
+            }
+
+            PlayClickSfx();
+        }
+
+        public void OnSubmit(BaseEventData eventData)
+        {
+            PlayClickSfx();
+        }
+
+        public void SetTintTargetGraphic(bool enabled)
+        {
+            tintTargetGraphic = enabled;
         }
 
         private void PlayClickSfx()

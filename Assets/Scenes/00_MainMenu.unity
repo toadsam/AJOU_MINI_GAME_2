@@ -269,11 +269,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6888301100729808261, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.07
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6888301100729808261, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3.04
+      value: 1.14
       objectReference: {fileID: 0}
     - target: {fileID: 6888301100729808261, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -927,6 +927,42 @@ PrefabInstance:
     - target: {fileID: 3322498760633442393, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
       propertyPath: m_Name
       value: AudioManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsButtonText
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsTextColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsTextColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsTextColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsButtonSize.y
+      value: 92
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsButtonSprite
+      value: 
+      objectReference: {fileID: -4503337625826029216, guid: 07c4f7c980c23364483c96d891b4483d, type: 3}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsButtonColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsButtonColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsButtonColor.r
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
