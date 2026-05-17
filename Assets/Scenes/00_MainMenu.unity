@@ -945,13 +945,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
+      propertyPath: optionsButtonSize.x
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
       propertyPath: optionsButtonSize.y
-      value: 92
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
       propertyPath: optionsButtonSprite
       value: 
-      objectReference: {fileID: -4503337625826029216, guid: 07c4f7c980c23364483c96d891b4483d, type: 3}
+      objectReference: {fileID: 4377603412920947138, guid: bed75147befae0d439b27f07b183eadb, type: 3}
     - target: {fileID: 8928739102890159999, guid: 185bb42aca30ece40b970a93404b5cea, type: 3}
       propertyPath: optionsButtonColor.b
       value: 1

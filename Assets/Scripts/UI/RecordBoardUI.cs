@@ -17,13 +17,18 @@ namespace AjouFestival.UI
         [SerializeField] private Button ajouBoontuButton;
         [SerializeField] private Button balanceWalkButton;
         [SerializeField] private Button soccerButton;
+        [SerializeField] private Button previousPageButton;
+        [SerializeField] private Button nextPageButton;
+        [SerializeField] private Text pageText;
         [SerializeField] private Button gameSelectButton;
         [SerializeField] private Button mainMenuButton;
 
         [Header("Runtime Fallback")]
         [SerializeField] private bool createFallbackUI = true;
+        [SerializeField, Min(1)] private int recordsPerPage = 20;
 
         private GameType currentFilter = GameType.None;
+        private int currentPage;
 
         private void OnEnable()
         {
@@ -67,6 +72,18 @@ namespace AjouFestival.UI
                 mainMenuButton.onClick.RemoveAllListeners();
                 mainMenuButton.onClick.AddListener(SceneLoader.LoadMainMenu);
             }
+
+            if (previousPageButton != null)
+            {
+                previousPageButton.onClick.RemoveAllListeners();
+                previousPageButton.onClick.AddListener(ShowPreviousPage);
+            }
+
+            if (nextPageButton != null)
+            {
+                nextPageButton.onClick.RemoveAllListeners();
+                nextPageButton.onClick.AddListener(ShowNextPage);
+            }
         }
 
         private void EnsureButtonAudioComponents()
@@ -75,6 +92,8 @@ namespace AjouFestival.UI
             EnsureButtonAudioComponent(ajouBoontuButton);
             EnsureButtonAudioComponent(balanceWalkButton);
             EnsureButtonAudioComponent(soccerButton);
+            EnsureButtonAudioComponent(previousPageButton);
+            EnsureButtonAudioComponent(nextPageButton);
             EnsureButtonAudioComponent(gameSelectButton);
             EnsureButtonAudioComponent(mainMenuButton);
         }
@@ -116,7 +135,35 @@ namespace AjouFestival.UI
             }
 
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => ShowRecords(type));
+            button.onClick.AddListener(() =>
+            {
+                currentPage = 0;
+                ShowRecords(type);
+            });
+        }
+
+        private void ShowPreviousPage()
+        {
+            if (currentPage <= 0)
+            {
+                return;
+            }
+
+            currentPage--;
+            ShowRecords(currentFilter);
+        }
+
+        private void ShowNextPage()
+        {
+            List<ScoreHistoryManager.ScoreHistoryRecord> records = ScoreHistoryManager.GetRecords(currentFilter);
+            int totalPages = GetTotalPages(records.Count);
+            if (currentPage >= totalPages - 1)
+            {
+                return;
+            }
+
+            currentPage++;
+            ShowRecords(currentFilter);
         }
 
         private void ShowRecords(GameType type)
@@ -131,10 +178,29 @@ namespace AjouFestival.UI
 
             List<ScoreHistoryManager.ScoreHistoryRecord> records = ScoreHistoryManager.GetRecords(type);
             bool hasRecords = records.Count > 0;
+            int totalPages = GetTotalPages(records.Count);
+            currentPage = Mathf.Clamp(currentPage, 0, Mathf.Max(0, totalPages - 1));
+
             if (emptyText != null)
             {
                 emptyText.gameObject.SetActive(!hasRecords);
                 emptyText.text = "\uC800\uC7A5\uB41C \uAE30\uB85D\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.";
+            }
+
+            if (pageText != null)
+            {
+                pageText.gameObject.SetActive(hasRecords);
+                pageText.text = hasRecords ? $"{currentPage + 1} / {totalPages}" : string.Empty;
+            }
+
+            if (previousPageButton != null)
+            {
+                previousPageButton.interactable = hasRecords && currentPage > 0;
+            }
+
+            if (nextPageButton != null)
+            {
+                nextPageButton.interactable = hasRecords && currentPage < totalPages - 1;
             }
 
             if (recordsText == null)
@@ -149,15 +215,27 @@ namespace AjouFestival.UI
                 return;
             }
 
-            int count = Mathf.Min(records.Count, 50);
-            var lines = new List<string>(count);
-            for (int i = 0; i < count; i++)
+            int pageSize = Mathf.Max(1, recordsPerPage);
+            int startIndex = currentPage * pageSize;
+            int endIndex = Mathf.Min(records.Count, startIndex + pageSize);
+            var lines = new List<string>(endIndex - startIndex);
+            for (int i = startIndex; i < endIndex; i++)
             {
                 ScoreHistoryManager.ScoreHistoryRecord record = records[i];
                 lines.Add($"{i + 1}. {GetGameName(record.gameType)}  |  {record.playerName}  |  {record.scoreText}  |  {record.recordedAt}");
             }
 
             recordsText.text = string.Join("\n", lines);
+        }
+
+        private int GetTotalPages(int recordCount)
+        {
+            if (recordCount <= 0)
+            {
+                return 1;
+            }
+
+            return Mathf.CeilToInt(recordCount / (float)Mathf.Max(1, recordsPerPage));
         }
 
         private void EnsureFallbackUI()
@@ -194,6 +272,10 @@ namespace AjouFestival.UI
             {
                 emptyText = CreateText(canvas.transform, "EmptyText", string.Empty, new Vector2(0f, 30f), new Vector2(600f, 70f), 26, TextAnchor.MiddleCenter);
             }
+
+            if (previousPageButton == null) previousPageButton = CreateButton(canvas.transform, "PreviousPageButton", "<", new Vector2(-140f, -220f), new Vector2(76f, 42f));
+            if (pageText == null) pageText = CreateText(canvas.transform, "PageText", "1 / 1", new Vector2(0f, -220f), new Vector2(130f, 42f), 22, TextAnchor.MiddleCenter);
+            if (nextPageButton == null) nextPageButton = CreateButton(canvas.transform, "NextPageButton", ">", new Vector2(140f, -220f), new Vector2(76f, 42f));
 
             if (gameSelectButton == null) gameSelectButton = CreateButton(canvas.transform, "GameSelectButton", "\uAC8C\uC784 \uC120\uD0DD", new Vector2(-100f, -282f), new Vector2(170f, 48f));
             if (mainMenuButton == null) mainMenuButton = CreateButton(canvas.transform, "MainMenuButton", "\uBA54\uC778", new Vector2(100f, -282f), new Vector2(170f, 48f));
