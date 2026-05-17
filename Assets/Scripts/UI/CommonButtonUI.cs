@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using AjouFestival.Core;
 
 namespace AjouFestival.UI
 {
@@ -10,6 +11,11 @@ namespace AjouFestival.UI
         [SerializeField] private float hoverScale = 1.04f;
         [SerializeField] private Color normalColor = new Color(0.08f, 0.42f, 0.86f, 0.95f);
         [SerializeField] private Color hoverColor = new Color(0.12f, 0.72f, 1f, 1f);
+        [Header("SFX")]
+        [SerializeField] private AudioClip clickSfx;
+        [SerializeField] private AudioClip hoverSfx;
+        [SerializeField, Range(0f, 1f)] private float clickSfxVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float hoverSfxVolume = 0.6f;
 
         private Button button;
         private Graphic targetGraphic;
@@ -24,15 +30,24 @@ namespace AjouFestival.UI
             {
                 targetGraphic.color = normalColor;
             }
+
+            button.onClick.AddListener(PlayClickSfx);
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
+            if (button != null && !button.interactable)
+            {
+                return;
+            }
+
             transform.localScale = baseScale * hoverScale;
             if (targetGraphic != null)
             {
                 targetGraphic.color = hoverColor;
             }
+
+            PlayHoverSfx();
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -42,6 +57,26 @@ namespace AjouFestival.UI
             {
                 targetGraphic.color = normalColor;
             }
+        }
+
+        private void PlayClickSfx()
+        {
+            if (clickSfx == null || button == null || !button.interactable)
+            {
+                return;
+            }
+
+            AudioManager.Ensure().PlaySfx(clickSfx, clickSfxVolume);
+        }
+
+        private void PlayHoverSfx()
+        {
+            if (hoverSfx == null)
+            {
+                return;
+            }
+
+            AudioManager.Ensure().PlaySfx(hoverSfx, hoverSfxVolume);
         }
     }
 }

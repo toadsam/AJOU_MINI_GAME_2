@@ -208,6 +208,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3825195189364530794, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: clickSfx
+      value: 
+      objectReference: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
+    - target: {fileID: 3825195189364530794, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
       propertyPath: normalColor.b
       value: 1
       objectReference: {fileID: 0}
@@ -247,6 +251,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5135059542356302886, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
+      propertyPath: clickSfx
+      value: 
+      objectReference: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
     - target: {fileID: 5135059542356302886, guid: dc70a7824c51c6b4e9a0868161c12120, type: 3}
       propertyPath: normalColor.b
       value: 1
