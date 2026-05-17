@@ -148,6 +148,7 @@ namespace AjouFestival.Games.AjouBoontu
             body.linearVelocity = new Vector2(body.linearVelocity.x, jumpForce);
             groundedPlatforms.Clear();
             groundContacts = 0;
+            gameManager?.PlayJumpSfx();
         }
 
         public void SetRunSpeed(float speed)
@@ -290,6 +291,7 @@ namespace AjouFestival.Games.AjouBoontu
 
             if (other.GetComponent<RunnerObstacle>() != null)
             {
+                gameManager?.PlayBadItemSfx();
                 gameManager?.GameOver("Hit an obstacle.");
             }
         }

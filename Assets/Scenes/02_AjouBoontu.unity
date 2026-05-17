@@ -5065,6 +5065,14 @@ MonoBehaviour:
   clearTrophyFadeInSeconds: 0.45
   clearTrophyVisibleSeconds: 2.5
   clearTrophyFadeOutSeconds: 0.35
+  jumpSfx: {fileID: 8300000, guid: ba39bf8baf6d13046889b2d64822381a, type: 3}
+  goodItemSfx: {fileID: 8300000, guid: c5cb2ac29e89dbf43a9b644caaad45e6, type: 3}
+  badItemSfx: {fileID: 8300000, guid: 1ed8fb76fc64e4e46847348138782234, type: 3}
+  speedUpSfx: {fileID: 0}
+  jumpSfxVolume: 1
+  goodItemSfxVolume: 1
+  badItemSfxVolume: 1
+  speedUpSfxVolume: 1
 --- !u!4 &1171160407
 Transform:
   m_ObjectHideFlags: 0

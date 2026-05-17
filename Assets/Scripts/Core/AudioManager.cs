@@ -111,12 +111,17 @@ namespace AjouFestival.Core
 
         public void PlaySfx(AudioClip clip)
         {
+            PlaySfx(clip, 1f);
+        }
+
+        public void PlaySfx(AudioClip clip, float volume)
+        {
             if (clip == null || sfxSource == null)
             {
                 return;
             }
 
-            sfxSource.PlayOneShot(clip);
+            sfxSource.PlayOneShot(clip, Mathf.Clamp01(volume));
         }
 
         private void PlaySceneMusic(Scene scene)
@@ -169,20 +174,44 @@ namespace AjouFestival.Core
                     continue;
                 }
 
-                if (firstClipSource == null)
-                {
-                    firstClipSource = source;
-                }
-
                 string objectName = source.gameObject.name;
                 if (objectName.IndexOf(SceneMusicMarker, System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                     objectName.IndexOf(SceneMusicMarkerAlt, System.StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     return source;
                 }
+
+                if (firstClipSource == null && !IsSceneSfxSourceName(objectName))
+                {
+                    firstClipSource = source;
+                }
             }
 
             return null;
+        }
+
+        private static bool IsSceneSfxSourceName(string objectName)
+        {
+            if (string.IsNullOrWhiteSpace(objectName))
+            {
+                return false;
+            }
+
+            string[] sfxMarkers =
+            {
+                "SFX", "Sound", "Jump", "Item", "Collect", "Hit", "Obstacle", "Speed",
+                "\uC810\uD504", "\uC544\uC774\uD15C", "\uC7A5\uC560\uBB3C", "\uC18D\uB3C4"
+            };
+
+            for (int i = 0; i < sfxMarkers.Length; i++)
+            {
+                if (objectName.IndexOf(sfxMarkers[i], System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void UpdateFallbackAudioListener()

@@ -40,10 +40,23 @@ namespace AjouFestival.Games.AjouBoontu
         [SerializeField, Min(0.01f)] private float clearTrophyFadeInSeconds = 0.45f;
         [SerializeField, Min(0f)] private float clearTrophyVisibleSeconds = 2.5f;
         [SerializeField, Min(0.01f)] private float clearTrophyFadeOutSeconds = 0.35f;
+        [Header("SFX (Scene Editable)")]
+        [SerializeField] private AudioClip jumpSfx;
+        [SerializeField] private AudioClip goodItemSfx;
+        [SerializeField] private AudioClip badItemSfx;
+        [SerializeField] private AudioClip speedUpSfx;
+        [SerializeField, Range(0f, 1f)] private float jumpSfxVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float goodItemSfxVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float badItemSfxVolume = 1f;
+        [SerializeField, Range(0f, 1f)] private float speedUpSfxVolume = 1f;
 
         private static readonly string[] StartGuideTextNames = { "GuideText", "StartGuideText", "Guide" };
         private static readonly string[] StartCountdownTextNames = { "CountdownText", "CountText", "TimerText" };
         private static readonly string[] StartButtonNames = { "StartButton", "ConfirmButton", "Start" };
+        private static readonly string[] JumpSfxNames = { "JumpSFX", "JumpSound", "Jump", "\uC810\uD504" };
+        private static readonly string[] GoodItemSfxNames = { "GoodItemSFX", "ItemSFX", "CollectSFX", "GoodItem", "Item", "\uC544\uC774\uD15C", "\uC88B\uC740\uC544\uC774\uD15C" };
+        private static readonly string[] BadItemSfxNames = { "BadItemSFX", "ObstacleSFX", "HitSFX", "BadItem", "Obstacle", "\uC7A5\uC560\uBB3C", "\uB098\uC05C\uC544\uC774\uD15C" };
+        private static readonly string[] SpeedUpSfxNames = { "SpeedUpSFX", "SpeedSFX", "SpeedUp", "Faster", "\uC18D\uB3C4" };
 
         public bool IsGameOver { get; private set; }
         public bool IsGameRunning { get; private set; }
@@ -95,6 +108,7 @@ namespace AjouFestival.Games.AjouBoontu
             }
 
             ResolveClearTrophyReferences();
+            ResolveSceneSfxReferences();
             clearTrophyInitiallyActive = clearTrophyObject != null && clearTrophyObject.activeSelf;
             if (clearTrophyObject != null)
             {
@@ -192,9 +206,34 @@ namespace AjouFestival.Games.AjouBoontu
                 return;
             }
 
+            PlayGoodItemSfx();
             scoreFloat += amount <= 0 ? itemScore : amount;
             Score = Mathf.FloorToInt(scoreFloat);
             if (ui != null) ui.SetScore(Score);
+        }
+
+        public void PlayJumpSfx()
+        {
+            if (jumpSfx == null) jumpSfx = FindAudioClipByObjectName(JumpSfxNames);
+            PlaySfx(jumpSfx, jumpSfxVolume);
+        }
+
+        public void PlayGoodItemSfx()
+        {
+            if (goodItemSfx == null) goodItemSfx = FindAudioClipByObjectName(GoodItemSfxNames);
+            PlaySfx(goodItemSfx, goodItemSfxVolume);
+        }
+
+        public void PlayBadItemSfx()
+        {
+            if (badItemSfx == null) badItemSfx = FindAudioClipByObjectName(BadItemSfxNames);
+            PlaySfx(badItemSfx, badItemSfxVolume);
+        }
+
+        public void PlaySpeedUpSfx()
+        {
+            if (speedUpSfx == null) speedUpSfx = FindAudioClipByObjectName(SpeedUpSfxNames);
+            PlaySfx(speedUpSfx, speedUpSfxVolume);
         }
 
         public void GameOver(string reason)
@@ -241,6 +280,7 @@ namespace AjouFestival.Games.AjouBoontu
             while (elapsedTime >= nextSpeedIncreaseTime)
             {
                 runner.SetRunSpeed(runner.RunSpeed + speedIncreaseAmount);
+                PlaySpeedUpSfx();
                 nextSpeedIncreaseTime += speedIncreaseIntervalSeconds;
             }
         }
@@ -458,6 +498,55 @@ namespace AjouFestival.Games.AjouBoontu
             }
 
             return clearTrophySpriteRenderer != null || clearTrophyGraphic != null;
+        }
+
+        private void ResolveSceneSfxReferences()
+        {
+            if (jumpSfx == null) jumpSfx = FindAudioClipByObjectName(JumpSfxNames);
+            if (goodItemSfx == null) goodItemSfx = FindAudioClipByObjectName(GoodItemSfxNames);
+            if (badItemSfx == null) badItemSfx = FindAudioClipByObjectName(BadItemSfxNames);
+            if (speedUpSfx == null) speedUpSfx = FindAudioClipByObjectName(SpeedUpSfxNames);
+        }
+
+        private static AudioClip FindAudioClipByObjectName(string[] preferredNames)
+        {
+            AudioSource[] sources = FindObjectsByType<AudioSource>(FindObjectsSortMode.None);
+            if (sources == null || sources.Length == 0)
+            {
+                return null;
+            }
+
+            for (int i = 0; i < preferredNames.Length; i++)
+            {
+                for (int j = 0; j < sources.Length; j++)
+                {
+                    AudioSource source = sources[j];
+                    if (source == null || source.clip == null)
+                    {
+                        continue;
+                    }
+
+                    string objectName = source.gameObject.name ?? string.Empty;
+                    if (objectName.IndexOf(preferredNames[i], System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        source.playOnAwake = false;
+                        source.Stop();
+                        return source.clip;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static void PlaySfx(AudioClip clip, float volume)
+        {
+            if (clip == null)
+            {
+                return;
+            }
+
+            AudioManager.Ensure().PlaySfx(clip, volume);
         }
 
         private void PositionClearTrophyAtCamera()
