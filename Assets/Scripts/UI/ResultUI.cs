@@ -247,29 +247,96 @@ namespace AjouFestival.UI
 
             if (recordBoardButton == null)
             {
-                recordBoardButton = CreateButton(canvas.transform, "RecordBoardButton", "\uAE30\uB85D \uBCF4\uAE30", new Vector2(0f, -260f), new Vector2(180f, 48f));
+                recordBoardButton = FindOrCreateButton(canvas.transform, "RecordBoardButton", "\uAE30\uB85D \uBCF4\uAE30", new Vector2(0f, -260f), new Vector2(180f, 48f));
             }
 
             if (recordPromptPanel == null)
             {
-                recordPromptPanel = CreatePanel(canvas.transform, "RecordPromptPanel", new Vector2(0f, 0f), new Vector2(430f, 220f));
-                recordPromptText = CreateText(recordPromptPanel.transform, "PromptText", recordPromptMessage, new Vector2(0f, 48f), new Vector2(380f, 60f), 28);
-                recordYesButton = CreateButton(recordPromptPanel.transform, "YesButton", "\uC608", new Vector2(-92f, -54f), new Vector2(130f, 46f));
-                recordNoButton = CreateButton(recordPromptPanel.transform, "NoButton", "\uC544\uB2C8\uC624", new Vector2(92f, -54f), new Vector2(130f, 46f));
+                recordPromptPanel = FindOrCreatePanel(canvas.transform, "RecordPromptPanel", new Vector2(0f, 0f), new Vector2(430f, 220f));
+                recordPromptText = FindOrCreateText(recordPromptPanel.transform, "PromptText", recordPromptMessage, new Vector2(0f, 48f), new Vector2(380f, 60f), 28);
+                recordYesButton = FindOrCreateButton(recordPromptPanel.transform, "YesButton", "\uC608", new Vector2(-92f, -54f), new Vector2(130f, 46f));
+                recordNoButton = FindOrCreateButton(recordPromptPanel.transform, "NoButton", "\uC544\uB2C8\uC624", new Vector2(92f, -54f), new Vector2(130f, 46f));
             }
 
             if (nameInputPanel == null)
             {
-                nameInputPanel = CreatePanel(canvas.transform, "NameInputPanel", new Vector2(0f, 0f), new Vector2(460f, 260f));
-                nameInputTitleText = CreateText(nameInputPanel.transform, "TitleText", nameInputMessage, new Vector2(0f, 76f), new Vector2(400f, 48f), 26);
-                playerNameInput = CreateInputField(nameInputPanel.transform, "PlayerNameInput", new Vector2(0f, 14f), new Vector2(320f, 46f));
-                recordSaveButton = CreateButton(nameInputPanel.transform, "SaveButton", "\uC800\uC7A5", new Vector2(-92f, -72f), new Vector2(130f, 46f));
-                recordCancelButton = CreateButton(nameInputPanel.transform, "CancelButton", "\uCDE8\uC18C", new Vector2(92f, -72f), new Vector2(130f, 46f));
+                nameInputPanel = FindOrCreatePanel(canvas.transform, "NameInputPanel", new Vector2(0f, 0f), new Vector2(460f, 260f));
+                nameInputTitleText = FindOrCreateText(nameInputPanel.transform, "TitleText", nameInputMessage, new Vector2(0f, 76f), new Vector2(400f, 48f), 26);
+                playerNameInput = FindOrCreateInputField(nameInputPanel.transform, "PlayerNameInput", new Vector2(0f, 14f), new Vector2(320f, 46f));
+                recordSaveButton = FindOrCreateButton(nameInputPanel.transform, "SaveButton", "\uC800\uC7A5", new Vector2(-92f, -72f), new Vector2(130f, 46f));
+                recordCancelButton = FindOrCreateButton(nameInputPanel.transform, "CancelButton", "\uCDE8\uC18C", new Vector2(92f, -72f), new Vector2(130f, 46f));
             }
 
             if (recordSavedText == null)
             {
-                recordSavedText = CreateText(canvas.transform, "RecordSavedText", string.Empty, new Vector2(0f, 220f), new Vector2(520f, 48f), 24);
+                recordSavedText = FindOrCreateText(canvas.transform, "RecordSavedText", string.Empty, new Vector2(0f, 220f), new Vector2(520f, 48f), 24);
+            }
+        }
+
+        private static GameObject FindOrCreatePanel(Transform parent, string name, Vector2 position, Vector2 size)
+        {
+            GameObject existing = FindUniqueDirectChild(parent, name);
+            return existing != null ? existing : CreatePanel(parent, name, position, size);
+        }
+
+        private static Text FindOrCreateText(Transform parent, string name, string value, Vector2 position, Vector2 size, int fontSize)
+        {
+            GameObject existing = FindUniqueDirectChild(parent, name);
+            Text text = existing != null ? existing.GetComponent<Text>() : null;
+            return text != null ? text : CreateText(parent, name, value, position, size, fontSize);
+        }
+
+        private static Button FindOrCreateButton(Transform parent, string name, string label, Vector2 position, Vector2 size)
+        {
+            GameObject existing = FindUniqueDirectChild(parent, name);
+            Button button = existing != null ? existing.GetComponent<Button>() : null;
+            return button != null ? button : CreateButton(parent, name, label, position, size);
+        }
+
+        private static InputField FindOrCreateInputField(Transform parent, string name, Vector2 position, Vector2 size)
+        {
+            GameObject existing = FindUniqueDirectChild(parent, name);
+            InputField input = existing != null ? existing.GetComponent<InputField>() : null;
+            return input != null ? input : CreateInputField(parent, name, position, size);
+        }
+
+        private static GameObject FindUniqueDirectChild(Transform parent, string childName)
+        {
+            GameObject first = null;
+            for (int i = parent.childCount - 1; i >= 0; i--)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || child.name != childName)
+                {
+                    continue;
+                }
+
+                if (first == null)
+                {
+                    first = child.gameObject;
+                    continue;
+                }
+
+                DestroyObject(child.gameObject);
+            }
+
+            return first;
+        }
+
+        private static void DestroyObject(GameObject obj)
+        {
+            if (obj == null)
+            {
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                Destroy(obj);
+            }
+            else
+            {
+                DestroyImmediate(obj);
             }
         }
 

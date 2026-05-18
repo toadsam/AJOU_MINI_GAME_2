@@ -253,32 +253,86 @@ namespace AjouFestival.UI
 
             if (titleText == null)
             {
-                titleText = CreateText(canvas.transform, "TitleText", "\uAE30\uB85D", new Vector2(0f, 280f), new Vector2(760f, 62f), 38, TextAnchor.MiddleCenter);
+                titleText = FindOrCreateText(canvas.transform, "TitleText", "\uAE30\uB85D", new Vector2(0f, 280f), new Vector2(760f, 62f), 38, TextAnchor.MiddleCenter);
             }
 
-            if (allButton == null) allButton = CreateButton(canvas.transform, "AllButton", "\uC804\uCCB4", new Vector2(-270f, 214f), new Vector2(126f, 42f));
-            if (ajouBoontuButton == null) ajouBoontuButton = CreateButton(canvas.transform, "AjouBoontuButton", "\uC544\uC8FC\uBD84\uD22C", new Vector2(-90f, 214f), new Vector2(150f, 42f));
-            if (balanceWalkButton == null) balanceWalkButton = CreateButton(canvas.transform, "BalanceWalkButton", "\uADE0\uD615\uAC77\uAE30", new Vector2(90f, 214f), new Vector2(150f, 42f));
-            if (soccerButton == null) soccerButton = CreateButton(canvas.transform, "SoccerButton", "\uCD95\uAD6C", new Vector2(270f, 214f), new Vector2(126f, 42f));
+            if (allButton == null) allButton = FindOrCreateButton(canvas.transform, "AllButton", "\uC804\uCCB4", new Vector2(-270f, 214f), new Vector2(126f, 42f));
+            if (ajouBoontuButton == null) ajouBoontuButton = FindOrCreateButton(canvas.transform, "AjouBoontuButton", "\uC544\uC8FC\uBD84\uD22C", new Vector2(-90f, 214f), new Vector2(150f, 42f));
+            if (balanceWalkButton == null) balanceWalkButton = FindOrCreateButton(canvas.transform, "BalanceWalkButton", "\uADE0\uD615\uAC77\uAE30", new Vector2(90f, 214f), new Vector2(150f, 42f));
+            if (soccerButton == null) soccerButton = FindOrCreateButton(canvas.transform, "SoccerButton", "\uCD95\uAD6C", new Vector2(270f, 214f), new Vector2(126f, 42f));
 
             if (recordsText == null)
             {
-                recordsText = CreateText(canvas.transform, "RecordsText", string.Empty, new Vector2(0f, 20f), new Vector2(860f, 320f), 22, TextAnchor.UpperLeft);
+                recordsText = FindOrCreateText(canvas.transform, "RecordsText", string.Empty, new Vector2(0f, 20f), new Vector2(860f, 320f), 22, TextAnchor.UpperLeft);
                 recordsText.horizontalOverflow = HorizontalWrapMode.Wrap;
                 recordsText.verticalOverflow = VerticalWrapMode.Overflow;
             }
 
             if (emptyText == null)
             {
-                emptyText = CreateText(canvas.transform, "EmptyText", string.Empty, new Vector2(0f, 30f), new Vector2(600f, 70f), 26, TextAnchor.MiddleCenter);
+                emptyText = FindOrCreateText(canvas.transform, "EmptyText", string.Empty, new Vector2(0f, 30f), new Vector2(600f, 70f), 26, TextAnchor.MiddleCenter);
             }
 
-            if (previousPageButton == null) previousPageButton = CreateButton(canvas.transform, "PreviousPageButton", "<", new Vector2(-140f, -220f), new Vector2(76f, 42f));
-            if (pageText == null) pageText = CreateText(canvas.transform, "PageText", "1 / 1", new Vector2(0f, -220f), new Vector2(130f, 42f), 22, TextAnchor.MiddleCenter);
-            if (nextPageButton == null) nextPageButton = CreateButton(canvas.transform, "NextPageButton", ">", new Vector2(140f, -220f), new Vector2(76f, 42f));
+            if (previousPageButton == null) previousPageButton = FindOrCreateButton(canvas.transform, "PreviousPageButton", "<", new Vector2(-140f, -220f), new Vector2(76f, 42f));
+            if (pageText == null) pageText = FindOrCreateText(canvas.transform, "PageText", "1 / 1", new Vector2(0f, -220f), new Vector2(130f, 42f), 22, TextAnchor.MiddleCenter);
+            if (nextPageButton == null) nextPageButton = FindOrCreateButton(canvas.transform, "NextPageButton", ">", new Vector2(140f, -220f), new Vector2(76f, 42f));
 
-            if (gameSelectButton == null) gameSelectButton = CreateButton(canvas.transform, "GameSelectButton", "\uAC8C\uC784 \uC120\uD0DD", new Vector2(-100f, -282f), new Vector2(170f, 48f));
-            if (mainMenuButton == null) mainMenuButton = CreateButton(canvas.transform, "MainMenuButton", "\uBA54\uC778", new Vector2(100f, -282f), new Vector2(170f, 48f));
+            if (gameSelectButton == null) gameSelectButton = FindOrCreateButton(canvas.transform, "GameSelectButton", "\uAC8C\uC784 \uC120\uD0DD", new Vector2(-100f, -282f), new Vector2(170f, 48f));
+            if (mainMenuButton == null) mainMenuButton = FindOrCreateButton(canvas.transform, "MainMenuButton", "\uBA54\uC778", new Vector2(100f, -282f), new Vector2(170f, 48f));
+        }
+
+        private static Text FindOrCreateText(Transform parent, string name, string value, Vector2 position, Vector2 size, int fontSize, TextAnchor alignment)
+        {
+            GameObject existing = FindUniqueDirectChild(parent, name);
+            Text text = existing != null ? existing.GetComponent<Text>() : null;
+            return text != null ? text : CreateText(parent, name, value, position, size, fontSize, alignment);
+        }
+
+        private static Button FindOrCreateButton(Transform parent, string name, string label, Vector2 position, Vector2 size)
+        {
+            GameObject existing = FindUniqueDirectChild(parent, name);
+            Button button = existing != null ? existing.GetComponent<Button>() : null;
+            return button != null ? button : CreateButton(parent, name, label, position, size);
+        }
+
+        private static GameObject FindUniqueDirectChild(Transform parent, string childName)
+        {
+            GameObject first = null;
+            for (int i = parent.childCount - 1; i >= 0; i--)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || child.name != childName)
+                {
+                    continue;
+                }
+
+                if (first == null)
+                {
+                    first = child.gameObject;
+                    continue;
+                }
+
+                DestroyObject(child.gameObject);
+            }
+
+            return first;
+        }
+
+        private static void DestroyObject(GameObject obj)
+        {
+            if (obj == null)
+            {
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                Destroy(obj);
+            }
+            else
+            {
+                DestroyImmediate(obj);
+            }
         }
 
         private static Text CreateText(Transform parent, string name, string value, Vector2 position, Vector2 size, int fontSize, TextAnchor alignment)
