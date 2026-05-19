@@ -2720,10 +2720,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Platform_Default (21)
       objectReference: {fileID: 0}
-    - target: {fileID: 2409595340542277992, guid: 0018c388ac8a67a4bbe7e713b07512e0, type: 3}
-      propertyPath: m_Size.x
-      value: 13.4
-      objectReference: {fileID: 0}
     - target: {fileID: 2816867914819360306, guid: 0018c388ac8a67a4bbe7e713b07512e0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 186.5
