@@ -11,8 +11,11 @@ namespace AjouFestival.Games.BalanceWalk
         [SerializeField] private float recycleBehind = 16f;
         [SerializeField] private float labelMetersPerUnit = 1f;
 
+        private BalanceWalkGameManager gameManager;
+
         private void Start()
         {
+            gameManager = FindFirstObjectByType<BalanceWalkGameManager>();
             if (target == null)
             {
                 BalancePlayerController player = FindFirstObjectByType<BalancePlayerController>();
@@ -25,6 +28,11 @@ namespace AjouFestival.Games.BalanceWalk
 
         private void Update()
         {
+            if (gameManager != null && !gameManager.HasStarted)
+            {
+                return;
+            }
+
             if (target == null)
             {
                 return;

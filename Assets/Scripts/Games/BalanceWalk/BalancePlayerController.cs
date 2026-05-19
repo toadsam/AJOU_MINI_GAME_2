@@ -45,6 +45,7 @@ namespace AjouFestival.Games.BalanceWalk
         [SerializeField] private bool useAutoMove = true;
         [SerializeField] private bool useDirectRotationAssist = true;
         [SerializeField] private float directRotationSpeed = 95f;
+        [SerializeField] private bool useSceneStartTransform = true;
 
         public float CurrentAngle { get; private set; }
         public float MaxSafeAngle => maxSafeAngle;
@@ -78,15 +79,44 @@ namespace AjouFestival.Games.BalanceWalk
         private float baseLegThickness;
         private float currentBodyAngle;
         private float bodyAngleVelocity;
+        private Vector3 sceneStartPosition;
+        private Quaternion sceneStartRotation;
 
         public void Initialize(BalanceWalkGameManager manager)
         {
             gameManager = manager;
         }
 
+        public void ResetToSceneStartTransform()
+        {
+            if (!useSceneStartTransform)
+            {
+                return;
+            }
+
+            if (body == null)
+            {
+                body = GetComponent<Rigidbody2D>();
+            }
+
+            transform.SetPositionAndRotation(sceneStartPosition, sceneStartRotation);
+
+            if (body != null)
+            {
+                body.position = sceneStartPosition;
+                body.rotation = sceneStartRotation.eulerAngles.z;
+                body.linearVelocity = Vector2.zero;
+                body.angularVelocity = 0f;
+            }
+
+            CurrentAngle = Mathf.DeltaAngle(0f, sceneStartRotation.eulerAngles.z);
+        }
+
         private void Awake()
         {
             body = GetComponent<Rigidbody2D>();
+            sceneStartPosition = transform.position;
+            sceneStartRotation = transform.rotation;
             body.gravityScale = 0f;
             body.angularDamping = 0.8f;
             body.interpolation = RigidbodyInterpolation2D.Interpolate;

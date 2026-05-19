@@ -58,9 +58,14 @@ namespace AjouFestival.Games.BalanceWalk
             GameSessionManager.Ensure().StartGame(GameType.BalanceWalk, SceneLoader.BalanceWalkScene);
             CountdownRemaining = countdownDuration;
             HasStarted = false;
-            startX = player != null ? player.transform.position.x : 0f;
 
-            if (player != null) player.Initialize(this);
+            if (player != null)
+            {
+                player.Initialize(this);
+                player.ResetToSceneStartTransform();
+            }
+
+            startX = player != null ? player.transform.position.x : 0f;
             if (ui != null)
             {
                 ui.SetBestTime(ScoreRecordManager.GetBestScore(GameType.BalanceWalk), scorePerSecond);
@@ -165,6 +170,8 @@ namespace AjouFestival.Games.BalanceWalk
             if (player != null)
             {
                 player.Initialize(this);
+                player.ResetToSceneStartTransform();
+                startX = player.transform.position.x;
             }
         }
 

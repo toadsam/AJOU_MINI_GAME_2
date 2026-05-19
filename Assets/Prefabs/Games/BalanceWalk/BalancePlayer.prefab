@@ -202,6 +202,7 @@ MonoBehaviour:
   useAutoMove: 1
   useDirectRotationAssist: 1
   directRotationSpeed: 95
+  useSceneStartTransform: 1
 --- !u!1 &3000000000000002001
 GameObject:
   m_ObjectHideFlags: 0

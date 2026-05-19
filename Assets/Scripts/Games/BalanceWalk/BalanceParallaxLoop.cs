@@ -19,6 +19,8 @@ namespace AjouFestival.Games.BalanceWalk
         private float startX;
         private float targetStartX;
         private float wrapSpanWidth;
+        private BalanceWalkGameManager gameManager;
+        private bool hasCapturedRuntimeStart;
         private readonly List<Transform> tiles = new();
         private readonly List<float> baseOffsets = new();
         private readonly List<int> wrapCounts = new();
@@ -26,6 +28,7 @@ namespace AjouFestival.Games.BalanceWalk
         private void Start()
         {
             startX = transform.position.x;
+            gameManager = FindFirstObjectByType<BalanceWalkGameManager>();
             if (target == null)
             {
                 BalancePlayerController player = FindFirstObjectByType<BalancePlayerController>();
@@ -39,9 +42,19 @@ namespace AjouFestival.Games.BalanceWalk
 
         private void LateUpdate()
         {
+            if (gameManager != null && !gameManager.HasStarted)
+            {
+                return;
+            }
+
             if (target == null)
             {
                 return;
+            }
+
+            if (!hasCapturedRuntimeStart)
+            {
+                CaptureRuntimeStart();
             }
 
             float travelled = target.position.x - targetStartX;
@@ -111,6 +124,18 @@ namespace AjouFestival.Games.BalanceWalk
             baseOffsets.Add(0f);
             wrapCounts.Add(0);
             wrapSpanWidth = tileWidth * Mathf.Max(1, tileCount);
+        }
+
+        private void CaptureRuntimeStart()
+        {
+            startX = transform.position.x;
+            targetStartX = target != null ? target.position.x : 0f;
+            for (int i = 0; i < wrapCounts.Count; i++)
+            {
+                wrapCounts[i] = 0;
+            }
+
+            hasCapturedRuntimeStart = true;
         }
 
         private void CreateGeneratedTiles()

@@ -4236,8 +4236,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AjouFestival.UI.CommonButtonUI
   hoverScale: 1.04
+  tintTargetGraphic: 1
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   hoverColor: {r: 0.12, g: 0.72, b: 1, a: 1}
+  clickSfx: {fileID: 0}
+  hoverSfx: {fileID: 0}
+  clickSfxVolume: 1
+  hoverSfxVolume: 0.6
 --- !u!114 &752819218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5343,6 +5348,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1708039379210770465, guid: 1a472616f399293468c9a07c90ec483c, type: 3}
+      propertyPath: moveSpeed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1708039379210770465, guid: 1a472616f399293468c9a07c90ec483c, type: 3}
+      propertyPath: maxSafeAngle
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 1708039379210770465, guid: 1a472616f399293468c9a07c90ec483c, type: 3}
+      propertyPath: randomTiltForce
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1708039379210770465, guid: 1a472616f399293468c9a07c90ec483c, type: 3}
+      propertyPath: speedIncreaseRate
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 3000000000000002001, guid: 1a472616f399293468c9a07c90ec483c, type: 3}
       propertyPath: m_IsActive
       value: 0

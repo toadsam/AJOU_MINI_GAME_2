@@ -8,12 +8,16 @@ namespace AjouFestival.Games.BalanceWalk
         [SerializeField] private Vector3 offset = new Vector3(2.8f, 0.4f, -10f);
         [SerializeField] private float followSpeed = 3.2f;
         [SerializeField] private bool followXOnly = true;
+        [SerializeField] private bool useSceneOffsetOnStart = true;
 
         private float fixedY;
+        private BalanceWalkGameManager gameManager;
+        private bool hasStartedFollowing;
 
         private void Start()
         {
             fixedY = transform.position.y;
+            gameManager = FindFirstObjectByType<BalanceWalkGameManager>();
             if (target == null)
             {
                 BalancePlayerController player = FindFirstObjectByType<BalancePlayerController>();
@@ -26,6 +30,11 @@ namespace AjouFestival.Games.BalanceWalk
 
         private void LateUpdate()
         {
+            if (gameManager != null && !gameManager.HasStarted)
+            {
+                return;
+            }
+
             if (target == null)
             {
                 BalancePlayerController player = FindFirstObjectByType<BalancePlayerController>();
@@ -38,6 +47,17 @@ namespace AjouFestival.Games.BalanceWalk
             if (target == null)
             {
                 return;
+            }
+
+            if (!hasStartedFollowing)
+            {
+                if (useSceneOffsetOnStart)
+                {
+                    offset = transform.position - target.position;
+                }
+
+                fixedY = transform.position.y;
+                hasStartedFollowing = true;
             }
 
             Vector3 desired = target.position + offset;
