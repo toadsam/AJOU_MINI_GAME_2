@@ -466,7 +466,7 @@ namespace AjouFestival.Games.Soccer
         {
             return difficulty switch
             {
-                SoccerAIDifficulty.Easy => new AIProfile(0.24f, 0.2f, 0.42f, 0.85f, 0.55f, 0.62f),
+                SoccerAIDifficulty.Easy => new AIProfile(0.34f, 0.12f, 0.62f, 1.05f, 0.35f, 0.42f),
                 SoccerAIDifficulty.Medium => new AIProfile(0.12f, 0.42f, 0.22f, 0.55f, 0.8f, 0.86f),
                 SoccerAIDifficulty.Hard => new AIProfile(0.05f, 0.75f, 0.1f, 0.32f, 0.97f, 1f),
                 _ => new AIProfile(0.12f, 0.42f, 0.22f, 0.55f, 0.8f, 0.86f)
